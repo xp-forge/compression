@@ -16,6 +16,11 @@ class Bzip2InputStreamTest extends DecompressingInputStreamTest {
 
   /** Erroneous data */
   protected function erroneous() {
-    yield ["BZh61AY&SY\331<Plain data>"];
+
+    // PHP 7.4RC1 is the first version to handle reading errors correctly, see
+    // https://github.com/php/php-src/commit/d59aac58b3e7da7ad01a194fe9840d89725ea229
+    if (PHP_VERSION_ID >= 70400) {
+      yield ["BZh61AY&SY\331<Plain data>"];
+    }
   }
 }
