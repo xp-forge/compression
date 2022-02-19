@@ -10,8 +10,8 @@ Compression streams
 
 Compressing output and decompressing input streams.
 
-Example
--------
+Examples
+--------
 Reading a GZIP-compressed file:
 
 ```php
