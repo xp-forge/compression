@@ -1,5 +1,6 @@
 <?php namespace io\streams\compress\unittest;
 
+use io\IOException;
 use io\streams\{InputStream, MemoryInputStream};
 use unittest\{Assert, Before, PrerequisitesNotMetError, Test};
 use util\Bytes;
@@ -21,6 +22,16 @@ abstract class DecompressingInputStreamTest {
     if (!in_array($depend, stream_get_filters())) {
       throw new PrerequisitesNotMetError(ucfirst($depend).' stream filter not available', null, [$depend]);
     }
+  }
+
+  #[Test]
+  public function empty_read() {
+    $in= new MemoryInputStream($this->compress('', 6));
+    $fixture= $this->fixture($in);
+    $chunk= $fixture->read();
+    $fixture->close();
+
+    Assert::equals('', $chunk);
   }
 
   #[Test]

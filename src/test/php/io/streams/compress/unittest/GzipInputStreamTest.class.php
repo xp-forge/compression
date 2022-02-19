@@ -1,8 +1,9 @@
 <?php namespace io\streams\compress\unittest;
 
+use io\IOException;
 use io\streams\compress\GzipInputStream;
 use io\streams\{InputStream, MemoryInputStream};
-use unittest\{Assert, Test, Values};
+use unittest\{Assert, Expect, Test, Values};
 
 class GzipInputStreamTest extends DecompressingInputStreamTest {
 
@@ -33,5 +34,21 @@ class GzipInputStreamTest extends DecompressingInputStreamTest {
     $fixture= $this->fixture(new MemoryInputStream($data));
     $fixture->close();
     Assert::equals('test.txt', $fixture->header()['filename']);
+  }
+
+  #[Test, Expect(IOException::class)]
+  public function reading_erroneous_data() {
+    $compressed= $this->compress('Test data', 6);
+
+    // Keep GZIP format header (first 10 bytes), then mangle rest of data
+    $in= new MemoryInputStream(substr($compressed, 0, 10).'Plain, uncompressed data');
+    $fixture= $this->fixture($in);
+    try {
+      while ($fixture->available()) {
+        $fixture->read();
+      }
+    } finally {
+      $fixture->close();
+    }
   }
 }

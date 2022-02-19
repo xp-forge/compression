@@ -108,7 +108,12 @@ class GzipInputStream implements InputStream {
    * @return string
    */
   public function read($limit= 8192) {
-    return fread($this->fd, $limit);
+    if (false === ($bytes= fread($this->fd, $limit))) {
+      $e= new IOException('Reading compressed data failed');
+      \xp::gc(__FILE__);
+      throw $e;
+    }
+    return $bytes;
   }
 
   /**
