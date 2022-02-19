@@ -30,7 +30,7 @@ abstract class CompressingOutputStreamTest {
   }
 
   #[Before]
-  public function verifyExtensionLoaded() {
+  public function verify() {
     $depend= $this->filter();
     if (!in_array($depend, stream_get_filters())) {
       throw new PrerequisitesNotMetError(ucfirst($depend).' stream filter not available', null, [$depend]);
