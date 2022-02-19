@@ -16,6 +16,9 @@ abstract class DecompressingInputStreamTest {
   /** Compress data */
   protected abstract function compress(string $in, int $level): string;
 
+  /** Return erroneous data */
+  protected abstract function erroneous();
+
   #[Before]
   public function verifyExtensionLoaded() {
     $depend= $this->filter();
@@ -66,6 +69,18 @@ abstract class DecompressingInputStreamTest {
     $fixture->close();
 
     Assert::equals('Hello', $chunk);
+  }
+
+  #[Test, Values('erroneous'), Expect(IOException::class)]
+  public function reading_erroneous($data) {
+    $fixture= $this->fixture(new MemoryInputStream($data));
+    try {
+      while ($fixture->available()) {
+        $fixture->read();
+      }
+    } finally {
+      $fixture->close();
+    }
   }
 
   #[Test]

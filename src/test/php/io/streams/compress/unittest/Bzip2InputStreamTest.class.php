@@ -13,4 +13,9 @@ class Bzip2InputStreamTest extends DecompressingInputStreamTest {
 
   /** Compress data */
   protected function compress(string $in, int $level): string { return bzcompress($in, $level); }
+
+  /** Erroneous data */
+  protected function erroneous() {
+    yield ["BZh61AY&SY\331<Plain data>"];
+  }
 }
