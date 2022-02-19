@@ -64,7 +64,7 @@ class GzipInputStream implements InputStream {
    * @throws io.IOException
    */
   public function __construct(InputStream $in) {
-    
+
     // Read GZIP format header
     // * ID1, ID2 (Identification, \x1F, \x8B)
     // * CM       (Compression Method, 8 = deflate)
@@ -73,12 +73,17 @@ class GzipInputStream implements InputStream {
     // * XFL      (Extra flags)
     // * OS       (Operating system)
     $this->header= unpack('a2id/Cmethod/Cflags/Vtime/Cextra/Cos', $in->read(10));
-    if ("\x1F\x8B" != $this->header['id']) {
-      throw new IOException('Invalid format, expected \037\213, have '.addcslashes($this->header['id'], "\0..\377"));
+    if ("\x1F\x8B" !== $this->header['id']) {
+      $e= new IOException('Invalid format, expected \037\213, have '.addcslashes($this->header['id'], "\0..\377"));
+      \xp::gc(__FILE__);
+      throw $e;
     }
+
     if (8 !== $this->header['method']) {
       throw new IOException('Unknown compression method #'.$this->header['method']);
     }
+
+    // Extract filename if present
     if (8 === ($this->header['flags'] & 8)) {
       $this->header['filename']= '';
       while ("\x00" !== ($b= $in->read(1))) {
