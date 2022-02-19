@@ -22,7 +22,8 @@ class BrotliInputStream implements InputStream {
     $this->handle= brotli_uncompress_init();
 
     // There are no magic bytes we can check for, we simply have to try
-    // uncompressing, see https://github.com/google/brotli/issues/298
+    // uncompressing, see https://github.com/google/brotli/issues/298 and
+    // https://stackoverflow.com/a/39032023
   }
 
   /**
