@@ -8,7 +8,7 @@ Compression streams
 [![Supports PHP 8.0+](https://raw.githubusercontent.com/xp-framework/web/master/static/php-8_0plus.svg)](http://php.net/)
 [![Latest Stable Version](https://poser.pugx.org/xp-forge/compression/version.png)](https://packagist.org/packages/xp-forge/compression)
 
-Compressing output and decompressing input streams.
+Compressing output and decompressing input streams including GZip, BZip2 and Brotli.
 
 Examples
 --------
@@ -37,8 +37,9 @@ $out->write("\n");
 $out->close();
 ```
 
-Supported compression formats:
+Dependencies
+------------
 
-* **GZIP** - using PHP's ["zlib" extension](https://www.php.net/zlib)
-* **BZIP2** - using PHP's ["bzip2" extension](https://www.php.net/bzip2)
-* **Brotli** - using https://github.com/kjdev/php-ext-brotli
+* **GZIP** - requires PHP's ["zlib" extension](https://www.php.net/zlib)
+* **BZIP2** - requires PHP's ["bzip2" extension](https://www.php.net/bzip2)
+* **Brotli** - requires https://github.com/kjdev/php-ext-brotli
