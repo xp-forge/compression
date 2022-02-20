@@ -1,6 +1,6 @@
 <?php namespace io\streams;
 
-use io\streams\compress\{Algorithm, Algorithms, Brotli, Bzip2, Gzip};
+use io\streams\compress\{Algorithm, Algorithms, None, Brotli, Bzip2, Gzip};
 use lang\IllegalArgumentException;
 
 /**
@@ -19,14 +19,7 @@ abstract class Compression {
   private static $algorithms;
 
   static function __static() {
-    self::$NONE= new class() implements Algorithm {
-      public function supported(): bool { return true; }
-      public function name(): string { return 'none'; }
-      public function token(): string { return 'identity'; }
-      public function extension(): string { return ''; }
-      public function open(InputStream $in): InputStream { return $in; }
-      public function create(OutputStream $out, int $method): OutputStream { return $out; }
-    };
+    self::$NONE= new None();
 
     // Register known algorithms included in this library
     self::$algorithms= (new Algorithms())->add(new Gzip(), new Bzip2(), new Brotli());
