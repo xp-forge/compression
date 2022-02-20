@@ -2,44 +2,56 @@
 
 use io\streams\Compression;
 use lang\IllegalArgumentException;
-use unittest\{Assert, Test, Values};
+use unittest\{Assert, Before, Test, Values};
 
 class CompressionTest {
 
   /** @return iterable */
   private function names() {
 
-    // Member names
-    yield ['none', Compression::$NONE];
-    yield ['gzip', Compression::$GZIP];
-    yield ['bzip2', Compression::$BZIP2];
-    yield ['brotli', Compression::$BROTLI];
-    yield ['NONE', Compression::$NONE];
-    yield ['GZIP', Compression::$GZIP];
-    yield ['BZIP2', Compression::$BZIP2];
-    yield ['BROTLI', Compression::$BROTLI];
+    // Special member
+    yield ['none', 'none'];
+    yield ['identity', 'none'];
+    yield ['NONE', 'none'];
+    yield ['IDENTITY', 'none'];
 
-    // Short names used in file extensions or HTTP Content-Encoding
-    yield ['identity', Compression::$NONE];
-    yield ['gz', Compression::$GZIP];
-    yield ['bz2', Compression::$BZIP2];
-    yield ['br', Compression::$BROTLI];
-    yield ['.gz', Compression::$GZIP];
-    yield ['.bz2', Compression::$BZIP2];
-    yield ['.br', Compression::$BROTLI];
+    // Included in this library
+    yield ['gzip', 'gzip'];
+    yield ['bzip2', 'bzip2'];
+    yield ['brotli', 'brotli'];
+    yield ['GZIP', 'gzip'];
+    yield ['BZIP2', 'bzip2'];
+    yield ['BROTLI', 'brotli'];
+
+    // File extensions
+    yield ['.gz', 'gzip'];
+    yield ['.bz2', 'bzip2'];
+    yield ['.br', 'brotli'];
+
+    // HTTP Content-Encoding aliases
+    yield ['br', 'brotli'];    
   }
 
   #[Test]
-  public function algorithms() {
-    Assert::instance('io.streams.Compression[]', Compression::algorithms());
+  public function enumerating_included_algorithms() {
+    $names= [];
+    foreach (Compression::algorithms() as $name => $algorithm) {
+      $names[]= $name;
+    }
+    Assert::equals(['gzip', 'bzip2', 'brotli'], $names);
+  }
+
+  #[Test]
+  public function supported_algorithms() {
+    Assert::instance('[:io.streams.compress.Algorithm]', iterator_to_array(Compression::algorithms()->supported()));
   }
 
   #[Test, Values('names')]
   public function named($name, $expected) {
-    Assert::equals($expected, Compression::named($name));
+    Assert::equals($expected, Compression::named($name)->name());
   }
 
-  #[Test, Values(map: ['none' => 'core', 'gzip' => 'zlib', 'bzip2' => 'bz2', 'brotli' => 'brotli'])]
+  #[Test, Values(map: ['none' => 'core', 'gzip' => 'zlib', 'bzip2' => 'bzip2', 'brotli' => 'brotli'])]
   public function supported($compression, $extension) {
     Assert::equals(extension_loaded($extension), Compression::named($compression)->supported());
   }
