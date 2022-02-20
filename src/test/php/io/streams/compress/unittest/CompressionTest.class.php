@@ -1,6 +1,6 @@
 <?php namespace io\streams\compress\unittest;
 
-use io\streams\Compression;
+use io\streams\{Compression, MemoryInputStream, MemoryOutputStream, Streams};
 use lang\IllegalArgumentException;
 use unittest\{Assert, Before, Test, Values};
 
@@ -30,6 +30,14 @@ class CompressionTest {
 
     // HTTP Content-Encoding aliases
     yield ['br', 'brotli'];    
+  }
+
+  /** @return iterable */
+  private function algorithms() {
+    yield [Compression::$NONE];
+    foreach (Compression::algorithms()->supported() as $algorithm) {
+      yield [$algorithm];
+    }
   }
 
   #[Test]
@@ -69,5 +77,20 @@ class CompressionTest {
   #[Test, Values(['', 'test']), Expect(IllegalArgumentException::class)]
   public function unknown($name) {
     Compression::named($name);
+  }
+
+  #[Test, Values('algorithms')]
+  public function roundtrip($compressed) {
+    $target= new MemoryOutputStream();
+
+    $out= $compressed->create($target, Compression::DEFAULT);
+    $out->write('Test');
+    $out->close();
+
+    $in= $compressed->open(new MemoryInputStream($target->bytes()));
+    $result= Streams::readAll($in);
+    $in->close();
+
+    Assert::equals('Test', $result);
   }
 }

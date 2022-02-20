@@ -25,6 +25,6 @@ class Brotli implements Algorithm {
   public function create(OutputStream $out, int $method): OutputStream {
     static $levels= [Compression::FASTEST => 1, Compression::DEFAULT => 11, Compression::STRONGEST => 11];
 
-    return new BrotlOutputStream($in, $levels[$method]);
+    return new BrotliOutputStream($out, $levels[$method]);
   }
 }

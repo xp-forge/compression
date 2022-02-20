@@ -25,6 +25,6 @@ class Bzip2 implements Algorithm {
   public function create(OutputStream $out, int $method): OutputStream {
     static $levels= [Compression::FASTEST => 1, Compression::DEFAULT => 4, Compression::STRONGEST => 9];
 
-    return new Bzip2OutputStream($in, $levels[$method]);
+    return new Bzip2OutputStream($out, $levels[$method]);
   }
 }
