@@ -37,6 +37,41 @@ $out->write("\n");
 $out->close();
 ```
 
+Fetching a given URL using [HTTP Accept-Encoding and Content-Encoding](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Encoding):
+
+```php
+use io\streams\Compression;
+use peer\http\HttpConnection;
+
+// Compile list of supported compression algorithms, e.g. "gzip, br"
+$supported= [];
+foreach (Compression::algorithms()->supported() as $compression) {
+  $supported[]= $compression->token();
+}
+echo "== Sending ", implode(', ', $supported), " ==\n";
+
+// Make request, sending supported content encodings via Accept-Encoding
+$conn= new HttpConnection($argv[1]);
+$res= $conn->get(null, ['Accept-Encoding' => implode(', ', $supported)]);
+
+// Handle Content-Encoding header
+if ($encoding= $res->header('Content-Encoding')) {
+  $compression= Compression::named($encoding[0]);
+
+  echo "== Using ", $compression->name(), " ==\n";
+  $in= $compression->open($res->in());
+} else {
+  echo "== Uncompressed ==\n";
+  $in= $res->in();
+}
+
+// Write contents to output
+while ($in->available()) {
+  echo $in->read();
+}
+$in->close();
+```
+
 Dependencies
 ------------
 
