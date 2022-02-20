@@ -1,6 +1,12 @@
 Compression streams ChangeLog
 =============================
 
+## ?.?.? / ????-??-??
+
+## 0.2.0 / 2022-02-20
+
+* Merged PR #1: Compression API - @thekid
+
 ## 0.1.0 / 2022-02-19
 
 * Throw exceptions when reading erroneous data (GZIP, BZ2) - @thekid
