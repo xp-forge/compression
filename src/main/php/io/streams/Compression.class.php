@@ -34,11 +34,7 @@ abstract class Compression extends Enum {
     };
 
     self::$GZIP= new class(1, 'GZIP') extends Compression {
-      const LEVELS= [
-        Compression::FASTEST   => 1,
-        Compression::DEFAULT   => 6,
-        Compression::STRONGEST => 9,
-      ];
+      const LEVELS= [Compression::FASTEST => 1, Compression::DEFAULT => 6, Compression::STRONGEST => 9];
 
       public function supported(): bool { return extension_loaded('zlib'); }
       public function token(): string { return 'gzip'; }
@@ -50,11 +46,7 @@ abstract class Compression extends Enum {
     };
 
     self::$BZIP2= new class(2, 'BZIP2') extends Compression {
-      const LEVELS= [
-        Compression::FASTEST   => 1,
-        Compression::DEFAULT   => 4,
-        Compression::STRONGEST => 9,
-      ];
+      const LEVELS= [Compression::FASTEST => 1, Compression::DEFAULT => 4, Compression::STRONGEST => 9];
 
       public function supported(): bool { return extension_loaded('bz2'); }
       public function token(): string { return 'bzip2'; }
@@ -66,11 +58,7 @@ abstract class Compression extends Enum {
     };
 
     self::$BROTLI= new class(3, 'BROTLI') extends Compression {
-      const LEVELS= [
-        Compression::FASTEST   => BROTLI_COMPRESS_LEVEL_MIN,
-        Compression::DEFAULT   => BROTLI_COMPRESS_LEVEL_DEFAULT,
-        Compression::STRONGEST => BROTLI_COMPRESS_LEVEL_MAX,
-      ];
+      const LEVELS= [Compression::FASTEST => 1, Compression::DEFAULT => 11, Compression::STRONGEST => 11];
 
       public function supported(): bool { return extension_loaded('brotli'); }
       public function token(): string { return 'br'; }
