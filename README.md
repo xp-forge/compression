@@ -37,6 +37,27 @@ $out->write("\n");
 $out->close();
 ```
 
+Dependencies
+------------
+Compression algorithms are implemented in C and thus require a specific PHP extension:
+
+* **GZIP** - requires PHP's ["zlib" extension](https://www.php.net/zlib)
+* **BZIP2** - requires PHP's ["bzip2" extension](https://www.php.net/bzip2)
+* **Brotli** - requires https://github.com/kjdev/php-ext-brotli
+
+Discovering supported algorithms can be done using the `Compression` API:
+
+```php
+use io\streams\Compression;
+
+echo "Supported algorithms:\n";
+foreach (Compression::algorithms()->supported() as $compression) {
+  echo '✓ ', $compression->name(), "\n";
+}
+```
+
+Advanced example:
+
 Fetching a given URL using [HTTP Accept-Encoding and Content-Encoding](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Encoding):
 
 ```php
@@ -72,9 +93,3 @@ while ($in->available()) {
 $in->close();
 ```
 
-Dependencies
-------------
-
-* **GZIP** - requires PHP's ["zlib" extension](https://www.php.net/zlib)
-* **BZIP2** - requires PHP's ["bzip2" extension](https://www.php.net/bzip2)
-* **Brotli** - requires https://github.com/kjdev/php-ext-brotli
