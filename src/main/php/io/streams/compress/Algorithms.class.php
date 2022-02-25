@@ -2,6 +2,7 @@
 
 use IteratorAggregate, Traversable;
 use lang\Value;
+use util\Objects;
 
 /**
  * Holds a list of compression algorithms
