@@ -3,6 +3,8 @@ Compression streams ChangeLog
 
 ## ?.?.? / ????-??-??
 
+## 0.3.0 / 2022-02-25
+
 * Merged PR #2: Make Compression::named() raise exceptions for unsupported
   algorithms
   (@thekid)
