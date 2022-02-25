@@ -3,6 +3,8 @@ Compression streams ChangeLog
 
 ## ?.?.? / ????-??-??
 
+* Added string representation for `Algorithm` instances - @thekid
+
 ## 0.2.0 / 2022-02-20
 
 * Merged PR #1: Compression API - @thekid

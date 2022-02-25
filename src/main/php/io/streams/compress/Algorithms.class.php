@@ -1,13 +1,14 @@
 <?php namespace io\streams\compress;
 
 use IteratorAggregate, Traversable;
+use lang\Value;
 
 /**
  * Holds a list of compression algorithms
  * 
  * @test  io.streams.compress.unittest.AlgorithmsTest
  */
-class Algorithms implements IteratorAggregate {
+class Algorithms implements IteratorAggregate, Value {
   private $set= [], $lookup= [];
 
   /**
@@ -57,5 +58,29 @@ class Algorithms implements IteratorAggregate {
     foreach ($this->set as $name => $algorithm) {
       if ($algorithm->supported()) yield $name => $algorithm;
     }
+  }
+
+  /** @return string */
+  public function hashCode() {
+    return 'CA'.implode('&', array_keys($this->set));
+  }
+
+  /** @return string */
+  public function toString() {
+    $s= '';
+    foreach ($this->set as $name => $algorithm) {
+      $s.= $algorithm->supported() ? ', '.$name : ', ['.$name.']';
+    }
+    return nameof($this).'('.substr($s, 2).')';
+  }
+
+  /**
+   * Comparison
+   *
+   * @param  var $value
+   * @return int
+   */
+  public function compareTo($value) {
+    return $value instanceof self ? Objects::compare(array_keys($this->set), array_keys($value->set)) : 1;
   }
 }
