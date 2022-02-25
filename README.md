@@ -42,8 +42,31 @@ Dependencies
 Compression algorithms are implemented in C and thus require a specific PHP extension:
 
 * **GZip** - requires PHP's ["zlib" extension](https://www.php.net/zlib)
-* **Bzip2 ** - requires PHP's ["bzip2" extension](https://www.php.net/bzip2)
+* **Bzip2** - requires PHP's ["bzip2" extension](https://www.php.net/bzip2)
 * **Brotli** - requires https://github.com/kjdev/php-ext-brotli
+
+Accessing these algorithms can be done via the `Compression` API:
+
+```php
+use io\streams\{Compression, FileInputStream, FileOutputStream};
+
+// Returns an algorithm instance. Raises a lang.MethodNotImplementedException
+// if the required "bzip2" extension is not loaded
+$compressed= Compression::named('bzip2');
+
+// Read
+$bytes= '';
+$in= $compressed->open(new FileInputStream($file));
+while ($in->available()) {
+  $bytes.= $in->read();
+}
+$in->close();
+
+// Write
+$out= $compressed->create(new FileOutputStream($file), Compression::STRONGEST);
+$out->write($bytes);
+$out->close();
+```
 
 Discovering supported algorithms can be done using the `Compression` API:
 

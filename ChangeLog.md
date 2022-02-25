@@ -3,6 +3,9 @@ Compression streams ChangeLog
 
 ## ?.?.? / ????-??-??
 
+* Merged PR #2: Make Compression::named() raise exceptions for unsupported
+  algorithms
+  (@thekid)
 * Added string representation for `Algorithm` instances - @thekid
 
 ## 0.2.0 / 2022-02-20
