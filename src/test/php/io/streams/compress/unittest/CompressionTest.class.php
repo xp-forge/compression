@@ -2,26 +2,18 @@
 
 use io\streams\{Compression, MemoryInputStream, MemoryOutputStream, Streams};
 use lang\IllegalArgumentException;
-use unittest\{Assert, Before, Test, Values};
+use unittest\actions\ExtensionAvailable;
+use unittest\{Action, Assert, Before, Test, Values};
 
 class CompressionTest {
 
   /** @return iterable */
   private function names() {
 
-    // Special member
-    yield ['none', 'none'];
-    yield ['identity', 'none'];
-    yield ['NONE', 'none'];
-    yield ['IDENTITY', 'none'];
-
     // Included in this library
     yield ['gzip', 'gzip'];
     yield ['bzip2', 'bzip2'];
     yield ['brotli', 'brotli'];
-    yield ['GZIP', 'gzip'];
-    yield ['BZIP2', 'bzip2'];
-    yield ['BROTLI', 'brotli'];
 
     // File extensions
     yield ['.gz', 'gzip'];
@@ -54,29 +46,39 @@ class CompressionTest {
     Assert::instance('[:io.streams.compress.Algorithm]', iterator_to_array(Compression::algorithms()->supported()));
   }
 
+  #[Test, Values(['none', 'NONE', 'identity', 'IDENTITY'])]
+  public function none($name) {
+    Assert::equals(Compression::$NONE, Compression::named($name));
+  }
+
+  #[Test, Values(['gzip', 'GZIP', '.gz', '.GZ']), Action(eval: 'new ExtensionAvailable("zlib")')]
+  public function named_gzip($name) {
+    Assert::equals('gzip', Compression::named($name)->name());
+  }
+
   #[Test, Values('names')]
-  public function named($name, $expected) {
-    Assert::equals($expected, Compression::named($name)->name());
+  public function algorithms_named($name, $expected) {
+    Assert::equals($expected, Compression::algorithms()->named($name)->name());
   }
 
-  #[Test, Values(map: ['none' => 'core', 'gzip' => 'zlib', 'bzip2' => 'bzip2', 'brotli' => 'brotli'])]
+  #[Test, Values(map: ['gzip' => 'zlib', 'bzip2' => 'bzip2', 'brotli' => 'brotli'])]
   public function supported($compression, $extension) {
-    Assert::equals(extension_loaded($extension), Compression::named($compression)->supported());
+    Assert::equals(extension_loaded($extension), Compression::algorithms()->named($compression)->supported());
   }
 
-  #[Test, Values(map: ['none' => 'identity', 'gzip' => 'gzip', 'bzip2' => 'bzip2', 'brotli' => 'br'])]
+  #[Test, Values(map: ['gzip' => 'gzip', 'bzip2' => 'bzip2', 'brotli' => 'br'])]
   public function token($compression, $expected) {
-    Assert::equals($expected, Compression::named($compression)->token());
+    Assert::equals($expected, Compression::algorithms()->named($compression)->token());
   }
 
-  #[Test, Values(map: ['none' => '', 'gzip' => '.gz', 'bzip2' => '.bz2', 'brotli' => '.br'])]
+  #[Test, Values(map: ['gzip' => '.gz', 'bzip2' => '.bz2', 'brotli' => '.br'])]
   public function extension($compression, $expected) {
-    Assert::equals($expected, Compression::named($compression)->extension());
+    Assert::equals($expected, Compression::algorithms()->named($compression)->extension());
   }
 
   #[Test, Values(['', 'test']), Expect(IllegalArgumentException::class)]
   public function unknown($name) {
-    Compression::named($name);
+    Compression::algorithms()->named($name);
   }
 
   #[Test, Values('algorithms')]

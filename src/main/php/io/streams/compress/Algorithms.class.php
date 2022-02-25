@@ -1,7 +1,7 @@
 <?php namespace io\streams\compress;
 
 use IteratorAggregate, Traversable;
-use lang\Value;
+use lang\{Value, IllegalArgumentException};
 use util\Objects;
 
 /**
@@ -34,6 +34,17 @@ class Algorithms implements IteratorAggregate, Value {
    */
   public function find(string $lookup) {
     return $this->set[$lookup] ?? (($name= $this->lookup[$lookup] ?? null) ? $this->set[$name] : null);
+  }
+
+  /**
+   * Like find, but raises an exception if nothing is found.
+   *
+   * @throws  lang.IllegalArgumentException
+   */
+  public function named(string $lookup): Algorithm {
+    if ($algorithm= $this->find($lookup)) return $algorithm;
+
+    throw new IllegalArgumentException('Unknown compression algorithm "'.$lookup.'"');
   }
 
   /**

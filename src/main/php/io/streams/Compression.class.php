@@ -1,7 +1,7 @@
 <?php namespace io\streams;
 
 use io\streams\compress\{Algorithm, Algorithms, None, Brotli, Bzip2, Gzip};
-use lang\IllegalArgumentException;
+use lang\MethodNotImplementedException;
 
 /**
  * Compression algorithms registry and lookup
@@ -37,16 +37,16 @@ abstract class Compression {
    * in upper- and lowercase, common file extensions as well as the tokens
    * used in HTTP Content-Encoding.
    *
-   * @throws  lang.IllegalArgumentException
+   * @throws  lang.IllegalArgumentException when unknown
+   * @throws  lang.MethodNotImplementedException when unsupported
    */
   public static function named(string $name): Algorithm {
     $lookup= strtolower($name);
-    if ('none' === $lookup || 'identity' === $lookup) {
-      return self::$NONE;
-    } else if ($algorithm= self::$algorithms->find($lookup)) {
-      return $algorithm;
-    }
+    if ('none' === $lookup || 'identity' === $lookup) return self::$NONE;
 
-    throw new IllegalArgumentException('Unknown compression algorithm "'.$name.'"');
+    $algorithm= self::$algorithms->named($lookup);
+    if ($algorithm->supported()) return $algorithm;
+
+    throw new MethodNotImplementedException('Unsupported compression algorithm', $name);
   }
 }
