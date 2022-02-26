@@ -2,26 +2,26 @@
 
 use io\streams\{Compression, InputStream, OutputStream};
 
-interface Algorithm {
+abstract class Algorithm {
 
   /** Returns whether this algorithm is supported in the current setup */
-  public function supported(): bool;
+  public abstract function supported(): bool;
 
   /** Returns the algorithm's name */
-  public function name(): string;
+  public abstract function name(): string;
 
   /** Returns the algorithm's HTTP Content-Encoding token */
-  public function token(): string;
+  public abstract function token(): string;
 
   /** Returns the algorithm's common file extension, including a leading "." */
-  public function extension(): string;
+  public abstract function extension(): string;
 
   /** Maps fastest, default and strongest levels */
-  public function level(int $select): int;
+  public abstract function level(int $select): int;
 
   /** Opens an input stream for reading */
-  public function open(InputStream $in): InputStream;
+  public abstract function open(InputStream $in): InputStream;
 
   /** Opens an output stream for writing */
-  public function create(OutputStream $out, int $level= Compression::DEFAULT): OutputStream;
+  public abstract function create(OutputStream $out, int $level= Compression::DEFAULT): OutputStream;
 }

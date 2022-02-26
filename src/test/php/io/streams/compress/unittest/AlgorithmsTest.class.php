@@ -9,7 +9,7 @@ class AlgorithmsTest {
 
   #[Before]
   public function algorithm() {
-    $this->supported= new class() implements Algorithm {
+    $this->supported= new class() extends Algorithm {
       public function supported(): bool { return true; }
       public function name(): string { return 'test'; }
       public function token(): string { return 'x-test'; }
@@ -18,7 +18,7 @@ class AlgorithmsTest {
       public function open(InputStream $in): InputStream { return $in; }
       public function create(OutputStream $out, int $method= Compression::DEFAULT): OutputStream { return $out; }
     };
-    $this->unsupported= new class() implements Algorithm {
+    $this->unsupported= new class() extends Algorithm {
       public function supported(): bool { return false; }
       public function name(): string { return 'lzw'; }
       public function token(): string { return 'compress'; }

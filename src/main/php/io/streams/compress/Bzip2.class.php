@@ -2,7 +2,7 @@
 
 use io\streams\{InputStream, OutputStream, Compression};
 
-class Bzip2 implements Algorithm {
+class Bzip2 extends Algorithm {
 
   /** Returns whether this algorithm is supported in the current setup */
   public function supported(): bool { return extension_loaded('bzip2'); }

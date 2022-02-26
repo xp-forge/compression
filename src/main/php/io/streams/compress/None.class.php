@@ -2,7 +2,7 @@
 
 use io\streams\{Compression, InputStream, OutputStream};
 
-class None implements Algorithm {
+class None extends Algorithm {
 
   /** Returns whether this algorithm is supported in the current setup */
   public function supported(): bool { return true; }

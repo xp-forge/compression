@@ -5,8 +5,8 @@ Compression streams ChangeLog
 
 ## 1.0.0 / 2022-02-26
 
-This first release stabilizes the `io.streams.compress.Algorithm`
-interface.
+This first release refactors the `io.streams.compress.Algorithm` interface
+into an abstract base class, stabilizing the algorithm API.
 
 * Added `Algorithm::level()` which will return the fastest, default and
   strongest levels supported for the predefined `Compression::DEFAULT`,
