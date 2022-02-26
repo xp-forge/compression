@@ -80,6 +80,17 @@ foreach (Compression::algorithms()->supported() as $compression) {
 }
 ```
 
+...or as a one-line shell command:
+
+```bash
+$ xp -w '\io\streams\Compression::algorithms()'
+io.streams.compress.Algorithms@{
+  io.streams.compress.Gzip(token: gzip, extension: .gz, supported: true, levels: 1..9)
+  io.streams.compress.Bzip2(token: bzip2, extension: .bz2, supported: false, levels: 1..9)
+  io.streams.compress.Brotli(token: br, extension: .br, supported: true, levels: 1..11)
+}
+```
+
 Advanced example
 ----------------
 Fetching a given URL using [HTTP Accept-Encoding and Content-Encoding](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Encoding):
