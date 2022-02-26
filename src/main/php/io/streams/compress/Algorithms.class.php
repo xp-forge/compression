@@ -79,11 +79,13 @@ class Algorithms implements IteratorAggregate, Value {
 
   /** @return string */
   public function toString() {
-    $s= '';
-    foreach ($this->set as $name => $algorithm) {
-      $s.= $algorithm->supported() ? ', '.$name : ', ['.$name.']';
+    if (empty($this->set)) return nameof($this).'{}';
+
+    $s= nameof($this)."@{\n";
+    foreach ($this->set as $algorithm) {
+      $s.= '  '.$algorithm->toString()."\n";
     }
-    return nameof($this).'('.substr($s, 2).')';
+    return $s.'}';
   }
 
   /**

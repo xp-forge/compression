@@ -8,6 +8,9 @@ Compression streams ChangeLog
 This first release refactors the `io.streams.compress.Algorithm` interface
 into an abstract base class, stabilizing the algorithm API.
 
+* Made *Algorithm* implement the `lang.Value` interface, adding a string
+  representation showing algorithm details
+  (@thekid)
 * Added `Algorithm::level()` which will return the fastest, default and
   strongest levels supported for the predefined `Compression::DEFAULT`,
   `Compression::FASTEST` and `Compression::STRONGEST`.
