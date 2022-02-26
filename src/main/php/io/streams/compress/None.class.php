@@ -1,6 +1,6 @@
 <?php namespace io\streams\compress;
 
-use io\streams\{InputStream, OutputStream};
+use io\streams\{Compression, InputStream, OutputStream};
 
 class None implements Algorithm {
 
@@ -22,7 +22,7 @@ class None implements Algorithm {
   }
 
   /** Opens an output stream for writing */
-  public function create(OutputStream $out, int $method): OutputStream {
+  public function create(OutputStream $out, int $method= Compression::DEFAULT): OutputStream {
     return $out;
   }
 }

@@ -1,6 +1,6 @@
 <?php namespace io\streams\compress;
 
-use io\streams\{InputStream, OutputStream};
+use io\streams\{Compression, InputStream, OutputStream};
 
 interface Algorithm {
 
@@ -20,5 +20,5 @@ interface Algorithm {
   public function open(InputStream $in): InputStream;
 
   /** Opens an output stream for writing */
-  public function create(OutputStream $out, int $method): OutputStream;
+  public function create(OutputStream $out, int $method= Compression::DEFAULT): OutputStream;
 }

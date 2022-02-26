@@ -1,7 +1,7 @@
 <?php namespace io\streams\compress\unittest;
 
 use io\streams\compress\{Algorithm, Algorithms};
-use io\streams\{InputStream, OutputStream};
+use io\streams\{Compression, InputStream, OutputStream};
 use unittest\{Assert, Before, Test, Values};
 
 class AlgorithmsTest {
@@ -15,7 +15,7 @@ class AlgorithmsTest {
       public function token(): string { return 'x-test'; }
       public function extension(): string { return '.test'; }
       public function open(InputStream $in): InputStream { return $in; }
-      public function create(OutputStream $out, int $method): OutputStream { return $out; }
+      public function create(OutputStream $out, int $method= Compression::DEFAULT): OutputStream { return $out; }
     };
     $this->unsupported= new class() implements Algorithm {
       public function supported(): bool { return false; }
@@ -23,7 +23,7 @@ class AlgorithmsTest {
       public function token(): string { return 'compress'; }
       public function extension(): string { return '.lz'; }
       public function open(InputStream $in): InputStream { return $in; }
-      public function create(OutputStream $out, int $method): OutputStream { return $out; }
+      public function create(OutputStream $out, int $method= Compression::DEFAULT): OutputStream { return $out; }
     };
   }
 

@@ -3,6 +3,12 @@ Compression streams ChangeLog
 
 ## ?.?.? / ????-??-??
 
+## 1.0.0 / 2022-02-26
+
+* Made method parameter of Algorithm::create() optional, and default to
+  `Compression::DEFAULT` (other values are `FASTEST` and `STRONGEST`).
+  (@thekid)
+
 ## 0.3.0 / 2022-02-25
 
 * Merged PR #2: Make Compression::named() raise exceptions for unsupported

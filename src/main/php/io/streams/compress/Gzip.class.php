@@ -22,7 +22,7 @@ class Gzip implements Algorithm {
   }
 
   /** Opens an output stream for writing */
-  public function create(OutputStream $out, int $method): OutputStream {
+  public function create(OutputStream $out, int $method= Compression::DEFAULT): OutputStream {
     static $levels= [Compression::FASTEST => 1, Compression::DEFAULT => 6, Compression::STRONGEST => 9];
 
     return new GzipOutputStream($out, $levels[$method]);
