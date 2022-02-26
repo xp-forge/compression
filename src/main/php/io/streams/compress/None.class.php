@@ -16,13 +16,16 @@ class None implements Algorithm {
   /** Returns the algorithm's common file extension, including a leading "." */
   public function extension(): string { return ''; }
 
+  /** Returns fastest, default and strongest levels */
+  public function level(int $select): int { return 0; }
+
   /** Opens an input stream for reading */
   public function open(InputStream $in): InputStream {
     return $in;
   }
 
   /** Opens an output stream for writing */
-  public function create(OutputStream $out, int $method= Compression::DEFAULT): OutputStream {
+  public function create(OutputStream $out, int $level= Compression::DEFAULT): OutputStream {
     return $out;
   }
 }

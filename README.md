@@ -62,7 +62,8 @@ while ($in->available()) {
 }
 $in->close();
 
-// Write
+// Write using strongest compression (other predefined values are FASTEST
+// and DEFAULT; alternatively, the level can be passed directly).
 $out= $compressed->create(new FileOutputStream($file), Compression::STRONGEST);
 $out->write($bytes);
 $out->close();

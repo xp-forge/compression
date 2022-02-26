@@ -16,15 +16,19 @@ class Gzip implements Algorithm {
   /** Returns the algorithm's common file extension, including a leading "." */
   public function extension(): string { return '.gz'; }
 
+  /** Maps fastest, default and strongest levels */
+  public function level(int $select): int {
+    static $levels= [Compression::FASTEST => 1, Compression::DEFAULT => 6, Compression::STRONGEST => 9];
+    return $levels[$select] ?? $select;
+  }
+
   /** Opens an input stream for reading */
   public function open(InputStream $in): InputStream {
     return new GzipInputStream($in);
   }
 
   /** Opens an output stream for writing */
-  public function create(OutputStream $out, int $method= Compression::DEFAULT): OutputStream {
-    static $levels= [Compression::FASTEST => 1, Compression::DEFAULT => 6, Compression::STRONGEST => 9];
-
-    return new GzipOutputStream($out, $levels[$method]);
+  public function create(OutputStream $out, int $level= Compression::DEFAULT): OutputStream {
+    return new GzipOutputStream($out, $this->level($level));
   }
 }

@@ -14,6 +14,7 @@ class AlgorithmsTest {
       public function name(): string { return 'test'; }
       public function token(): string { return 'x-test'; }
       public function extension(): string { return '.test'; }
+      public function level(int $select): int { return $select; }
       public function open(InputStream $in): InputStream { return $in; }
       public function create(OutputStream $out, int $method= Compression::DEFAULT): OutputStream { return $out; }
     };
@@ -22,6 +23,7 @@ class AlgorithmsTest {
       public function name(): string { return 'lzw'; }
       public function token(): string { return 'compress'; }
       public function extension(): string { return '.lz'; }
+      public function level(int $select): int { return $select; }
       public function open(InputStream $in): InputStream { return $in; }
       public function create(OutputStream $out, int $method= Compression::DEFAULT): OutputStream { return $out; }
     };

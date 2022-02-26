@@ -11,9 +11,9 @@ use lang\MethodNotImplementedException;
  * @test  io.streams.compress.unittest.CompressionTest
  */
 abstract class Compression {
-  const FASTEST   = 0;
-  const DEFAULT   = 1;
-  const STRONGEST = 2;
+  const FASTEST   = -1;
+  const DEFAULT   = -2;
+  const STRONGEST = -3;
 
   public static $NONE;
   private static $algorithms;

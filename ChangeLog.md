@@ -5,8 +5,15 @@ Compression streams ChangeLog
 
 ## 1.0.0 / 2022-02-26
 
-* Made method parameter of Algorithm::create() optional, and default to
-  `Compression::DEFAULT` (other values are `FASTEST` and `STRONGEST`).
+This first release stabilizes the `io.streams.compress.Algorithm`
+interface.
+
+* Added `Algorithm::level()` which will return the fastest, default and
+  strongest levels supported for the predefined `Compression::DEFAULT`,
+  `Compression::FASTEST` and `Compression::STRONGEST`.
+  (@thekid)
+* Changed `Algorithm::create()` to accept either predefined constants for
+  compression level or the level directly.
   (@thekid)
 
 ## 0.3.0 / 2022-02-25
