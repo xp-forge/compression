@@ -3,6 +3,8 @@ Compression streams ChangeLog
 
 ## ?.?.? / ????-??-??
 
+* Merged PR #3: Migrate to new testing library - @thekid
+
 ## 1.0.0 / 2022-02-26
 
 This first release refactors the `io.streams.compress.Algorithm` interface
