@@ -3,16 +3,11 @@
 use io\streams\MemoryOutputStream;
 use io\streams\compress\BrotliOutputStream;
 use lang\IllegalArgumentException;
-use unittest\{Assert, Before, Test, Values, PrerequisitesNotMetError};
+use test\verify\Runtime;
+use test\{Assert, Expect, Test, Values};
 
+#[Runtime(extensions: ['brotli'])]
 class BrotliOutputStreamTest {
-
-  #[Before]
-  public function verify() {
-    if (!extension_loaded('brotli')) {
-      throw new PrerequisitesNotMetError('Brotli extension missing');
-    }
-  }
 
   #[Test]
   public function can_create() {

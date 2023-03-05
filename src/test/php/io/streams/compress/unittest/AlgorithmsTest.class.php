@@ -2,7 +2,7 @@
 
 use io\streams\compress\{Algorithm, Algorithms};
 use io\streams\{Compression, InputStream, OutputStream};
-use unittest\{Assert, Before, Test, Values};
+use test\{Assert, Before, Test, Values};
 
 class AlgorithmsTest {
   private $supported, $unsupported;

@@ -2,11 +2,10 @@
 
 use io\streams\OutputStream;
 use io\streams\compress\GzipOutputStream;
+use test\verify\Runtime;
 
+#[Runtime(extensions: ['zlib'])]
 class GzipOutputStreamTest extends CompressingOutputStreamTest {
-
-  /** Get filter */
-  protected function filter(): string { return 'zlib.*'; }
 
   /** Create fixture */
   protected function fixture(OutputStream $wrapped, int $level): OutputStream { return new GzipOutputStream($wrapped, $level); }
