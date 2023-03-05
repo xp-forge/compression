@@ -2,11 +2,10 @@
 
 use io\streams\OutputStream;
 use io\streams\compress\Bzip2OutputStream;
+use test\verify\Runtime;
 
+#[Runtime(extensions: ['bz2'])]
 class Bzip2OutputStreamTest extends CompressingOutputStreamTest {
-
-  /** Get filter */
-  protected function filter(): string { return 'bzip2.*'; }
 
   /** Create fixture */
   protected function fixture(OutputStream $wrapped, int $level): OutputStream { return new Bzip2OutputStream($wrapped, $level); }

@@ -2,13 +2,10 @@
 
 use io\IOException;
 use io\streams\{InputStream, MemoryInputStream};
-use unittest\{Assert, Before, PrerequisitesNotMetError, Test};
+use test\{Assert, Expect, Test, Values};
 use util\Bytes;
 
 abstract class DecompressingInputStreamTest {
-
-  /** Get filter we depend on */
-  protected abstract function filter(): string;
 
   /** Create fixture */
   protected abstract function fixture(InputStream $wrapped): InputStream;
@@ -18,14 +15,6 @@ abstract class DecompressingInputStreamTest {
 
   /** Return erroneous data */
   protected abstract function erroneous();
-
-  #[Before]
-  public function verify() {
-    $depend= $this->filter();
-    if (!in_array($depend, stream_get_filters())) {
-      throw new PrerequisitesNotMetError(ucfirst($depend).' stream filter not available', null, [$depend]);
-    }
-  }
 
   #[Test]
   public function empty_read() {
@@ -71,7 +60,7 @@ abstract class DecompressingInputStreamTest {
     Assert::equals('Hello', $chunk);
   }
 
-  #[Test, Values('erroneous'), Expect(IOException::class)]
+  #[Test, Values(from: 'erroneous'), Expect(IOException::class)]
   public function reading_erroneous($data) {
     $fixture= $this->fixture(new MemoryInputStream($data));
     try {

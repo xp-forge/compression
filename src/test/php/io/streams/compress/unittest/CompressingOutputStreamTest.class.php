@@ -2,13 +2,10 @@
 
 use io\streams\{MemoryOutputStream, OutputStream};
 use lang\IllegalArgumentException;
-use unittest\{Assert, Before, Expect, PrerequisitesNotMetError, Test};
+use test\{Assert, Expect, Test, Values};
 use util\Bytes;
 
 abstract class CompressingOutputStreamTest {
-
-  /** Get filter we depend on */
-  protected abstract function filter(): string;
 
   /** Create a fixture */
   protected abstract function fixture(OutputStream $wrapped, int $level): OutputStream;
@@ -27,14 +24,6 @@ abstract class CompressingOutputStreamTest {
    */
   protected function assertCompressedDataEquals($expected, $actual) {
     Assert::equals(new Bytes($expected), new Bytes($actual));
-  }
-
-  #[Before]
-  public function verify() {
-    $depend= $this->filter();
-    if (!in_array($depend, stream_get_filters())) {
-      throw new PrerequisitesNotMetError(ucfirst($depend).' stream filter not available', null, [$depend]);
-    }
   }
 
   #[Test]

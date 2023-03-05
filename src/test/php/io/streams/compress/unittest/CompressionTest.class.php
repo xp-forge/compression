@@ -2,8 +2,8 @@
 
 use io\streams\{Compression, MemoryInputStream, MemoryOutputStream, Streams};
 use lang\IllegalArgumentException;
-use unittest\actions\ExtensionAvailable;
-use unittest\{Action, Assert, Before, Test, Values};
+use test\verify\Runtime;
+use test\{Assert, Expect, Before, Test, Values};
 
 class CompressionTest {
 
@@ -51,27 +51,27 @@ class CompressionTest {
     Assert::equals(Compression::$NONE, Compression::named($name));
   }
 
-  #[Test, Values(['gzip', 'GZIP', '.gz', '.GZ']), Action(eval: 'new ExtensionAvailable("zlib")')]
+  #[Test, Values(['gzip', 'GZIP', '.gz', '.GZ']), Runtime(extensions: ['zlib'])]
   public function named_gzip($name) {
     Assert::equals('gzip', Compression::named($name)->name());
   }
 
-  #[Test, Values('names')]
+  #[Test, Values(from: 'names')]
   public function algorithms_named($name, $expected) {
     Assert::equals($expected, Compression::algorithms()->named($name)->name());
   }
 
-  #[Test, Values(map: ['gzip' => 'zlib', 'bzip2' => 'bzip2', 'brotli' => 'brotli'])]
+  #[Test, Values([['gzip', 'zlib'], ['bzip2', 'bzip2'], ['brotli', 'brotli']])]
   public function supported($compression, $extension) {
     Assert::equals(extension_loaded($extension), Compression::algorithms()->named($compression)->supported());
   }
 
-  #[Test, Values(map: ['gzip' => 'gzip', 'bzip2' => 'bzip2', 'brotli' => 'br'])]
+  #[Test, Values([['gzip', 'gzip'], ['bzip2', 'bzip2'], ['brotli', 'br']])]
   public function token($compression, $expected) {
     Assert::equals($expected, Compression::algorithms()->named($compression)->token());
   }
 
-  #[Test, Values(map: ['gzip' => '.gz', 'bzip2' => '.bz2', 'brotli' => '.br'])]
+  #[Test, Values([['gzip', '.gz'], ['bzip2', '.bz2'], ['brotli', '.br']])]
   public function extension($compression, $expected) {
     Assert::equals($expected, Compression::algorithms()->named($compression)->extension());
   }
@@ -81,7 +81,7 @@ class CompressionTest {
     Compression::algorithms()->named($name);
   }
 
-  #[Test, Values('algorithms')]
+  #[Test, Values(from: 'algorithms')]
   public function roundtrip($compressed) {
     $target= new MemoryOutputStream();
 

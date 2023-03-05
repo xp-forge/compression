@@ -2,8 +2,10 @@
 
 use io\streams\MemoryInputStream;
 use io\streams\compress\BrotliInputStream;
-use unittest\{Assert, Before, Test, Values, PrerequisitesNotMetError};
+use test\verify\Runtime;
+use test\{Assert, Expect, Test, Values};
 
+#[Runtime(extensions: ['brotli'])]
 class BrotliInputStreamTest {
 
   /** @return iterable */
@@ -12,13 +14,6 @@ class BrotliInputStreamTest {
       yield [$level, ''];
       yield [$level, 'Test'];
       yield [$level, "GIF89a\x14\x12\x77..."];
-    }
-  }
-
-  #[Before]
-  public function verify() {
-    if (!extension_loaded('brotli')) {
-      throw new PrerequisitesNotMetError('Brotli extension missing');
     }
   }
 
@@ -36,7 +31,7 @@ class BrotliInputStreamTest {
     Assert::equals('', $read);
   }
 
-  #[Test, Values('compressed')]
+  #[Test, Values(from: 'compressed')]
   public function read_compressed($level, $bytes) {
     $in= new BrotliInputStream(new MemoryInputStream(brotli_compress($bytes, $level)));
     $read= $in->read();

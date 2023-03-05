@@ -2,11 +2,10 @@
 
 use io\streams\InputStream;
 use io\streams\compress\Bzip2InputStream;
+use test\verify\Runtime;
 
+#[Runtime(extensions: ['bz2'])]
 class Bzip2InputStreamTest extends DecompressingInputStreamTest {
-
-  /** Get filter */
-  protected function filter(): string { return 'bzip2.*'; }
 
   /** Create fixture */
   protected function fixture(InputStream $wrapped): InputStream { return new Bzip2InputStream($wrapped); }
