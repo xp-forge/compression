@@ -64,6 +64,10 @@ class GzipInputStream implements InputStream {
    * @throws io.IOException
    */
   public function __construct(InputStream $in) {
+    $header= '';
+    while (($l= strlen($header)) < 10 && $in->available()) {
+      $header.= $in->read(10 - $l);
+    }
 
     // Read GZIP format header
     // * ID1, ID2 (Identification, \x1F, \x8B)
@@ -72,7 +76,7 @@ class GzipInputStream implements InputStream {
     // * MTIME    (Modification time, Un*x timestamp)
     // * XFL      (Extra flags)
     // * OS       (Operating system)
-    $this->header= unpack('a2id/Cmethod/Cflags/Vtime/Cextra/Cos', $in->read(10));
+    $this->header= unpack('a2id/Cmethod/Cflags/Vtime/Cextra/Cos', $header);
     if ("\x1F\x8B" !== $this->header['id']) {
       $e= new IOException('Invalid format, expected \037\213, have '.addcslashes($this->header['id'], "\0..\377"));
       \xp::gc(__FILE__);
