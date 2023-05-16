@@ -3,7 +3,7 @@ Compression streams ChangeLog
 
 ## ?.?.? / ????-??-??
 
-## 1.0.0 / 2023-05-16
+## 1.0.1 / 2023-05-16
 
 * Fixed GZIP header reading - @thekid
 * Merged PR #3: Migrate to new testing library - @thekid
