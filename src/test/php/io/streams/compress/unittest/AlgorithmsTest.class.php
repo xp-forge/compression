@@ -5,7 +5,7 @@ use io\streams\{Compression, InputStream, OutputStream};
 use test\{Assert, Before, Test, Values};
 
 class AlgorithmsTest {
-  private $supported, $unsupported;
+  private $supported, $additional, $unsupported;
 
   #[Before]
   public function algorithm() {
@@ -14,6 +14,15 @@ class AlgorithmsTest {
       public function name(): string { return 'test'; }
       public function token(): string { return 'x-test'; }
       public function extension(): string { return '.test'; }
+      public function level(int $select): int { return $select; }
+      public function open(InputStream $in): InputStream { return $in; }
+      public function create(OutputStream $out, int $method= Compression::DEFAULT): OutputStream { return $out; }
+    };
+    $this->additional= new class() extends Algorithm {
+      public function supported(): bool { return true; }
+      public function name(): string { return 'add'; }
+      public function token(): string { return 'x-add'; }
+      public function extension(): string { return '.add'; }
       public function level(int $select): int { return $select; }
       public function open(InputStream $in): InputStream { return $in; }
       public function create(OutputStream $out, int $method= Compression::DEFAULT): OutputStream { return $out; }
@@ -66,8 +75,16 @@ class AlgorithmsTest {
   #[Test]
   public function supported() {
     Assert::equals(
-      ['test'=> $this->supported],
+      ['test' => $this->supported],
       iterator_to_array((new Algorithms())->add($this->supported, $this->unsupported)->supported())
+    );
+  }
+
+  #[Test]
+  public function accept() {
+    Assert::equals(
+      'x-test, x-add',
+      (new Algorithms())->add($this->supported, $this->additional, $this->unsupported)->accept()
     );
   }
 

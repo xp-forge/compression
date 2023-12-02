@@ -100,15 +100,12 @@ use io\streams\Compression;
 use peer\http\HttpConnection;
 
 // Compile list of supported compression algorithms, e.g. "gzip, br"
-$supported= [];
-foreach (Compression::algorithms()->supported() as $compression) {
-  $supported[]= $compression->token();
-}
-echo "== Sending ", implode(', ', $supported), " ==\n";
+$accept= Compression::algorithms()->accept();
+echo "== Sending {$accept} ==\n";
 
 // Make request, sending supported content encodings via Accept-Encoding
 $conn= new HttpConnection($argv[1]);
-$res= $conn->get(null, ['Accept-Encoding' => implode(', ', $supported)]);
+$res= $conn->get(null, ['Accept-Encoding' => $accept]);
 
 // Handle Content-Encoding header
 if ($encoding= $res->header('Content-Encoding')) {
