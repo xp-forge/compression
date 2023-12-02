@@ -27,7 +27,7 @@ abstract class Algorithm implements Value {
   public abstract function create(OutputStream $out, int $level= Compression::DEFAULT): OutputStream;
 
   /** @return string */
-  public function hashCode() { return crc32($this->name); }
+  public function hashCode() { return crc32($this->name()); }
 
   /** @return string */
   public function toString() {

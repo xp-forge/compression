@@ -3,6 +3,9 @@ Compression streams ChangeLog
 
 ## ?.?.? / ????-??-??
 
+## 1.0.2 / 2023-12-02
+
+* Fixed *E_WARNING: Undefined property: [...]::$name* - @thekid
 * Added PHP 8.4 to the test matrix - @thekid
 
 ## 1.0.1 / 2023-05-16
