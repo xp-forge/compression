@@ -72,6 +72,15 @@ class Algorithms implements IteratorAggregate, Value {
     }
   }
 
+  /** Returns HTTP accept header for supported algorithms */
+  public function accept(): string {
+    $accept= '';
+    foreach ($this->set as $algorithm) {
+      if ($algorithm->supported()) $accept.= ", {$algorithm->token()}";
+    }
+    return substr($accept, 2);
+  }
+
   /** @return string */
   public function hashCode() {
     return 'CA'.implode('&', array_keys($this->set));
