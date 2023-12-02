@@ -3,6 +3,10 @@ Compression streams ChangeLog
 
 ## ?.?.? / ????-??-??
 
+## 1.1.0 / 2023-12-02
+
+* Merged PR #4: Add `Algorithms::accept()` - @thekid
+
 ## 1.0.2 / 2023-12-02
 
 * Fixed *E_WARNING: Undefined property: [...]::$name* - @thekid
