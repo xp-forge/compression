@@ -3,6 +3,8 @@ Compression streams ChangeLog
 
 ## ?.?.? / ????-??-??
 
+* Added PHP 8.4 to the test matrix - @thekid
+
 ## 1.0.1 / 2023-05-16
 
 * Fixed GZIP header reading - @thekid
