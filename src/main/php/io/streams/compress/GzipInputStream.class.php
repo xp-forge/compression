@@ -8,7 +8,7 @@ use io\streams\InputStream;
  *
  * @ext  zlib
  * @see  https://www.rfc-editor.org/rfc/rfc1952.html
- * @testio.streams.compress.unittest.GzipInputStreamTest
+ * @test io.streams.compress.unittest.GzipInputStreamTest
  */
 class GzipInputStream implements InputStream {
   private $fd, $header;
