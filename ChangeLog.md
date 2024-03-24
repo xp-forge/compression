@@ -3,6 +3,10 @@ Compression streams ChangeLog
 
 ## ?.?.? / ????-??-??
 
+## 1.2.0 / 2024-03-24
+
+* Made compatible with XP 12 - @thekid
+
 ## 1.1.0 / 2023-12-02
 
 * Merged PR #4: Add `Algorithms::accept()` - @thekid
