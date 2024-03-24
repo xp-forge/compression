@@ -5,6 +5,9 @@ Compression streams ChangeLog
 
 ## 1.2.0 / 2024-03-24
 
+* Added `DeflatingOutputStream` and `InflatingInputStream` implementations
+  to the `io.streams.compress` package
+  (@thekid)
 * Made compatible with XP 12 - @thekid
 
 ## 1.1.0 / 2023-12-02
