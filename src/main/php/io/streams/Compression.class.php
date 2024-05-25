@@ -49,4 +49,22 @@ abstract class Compression {
 
     throw new MethodNotImplementedException('Unsupported compression algorithm', $name);
   }
+
+  /**
+   * Selects a compression for a given list of preferred algorithms. Returns
+   * the first supported one, or NULL if none in the given list is supported.
+   *
+   * @param   iterable $preferred
+   * @return  ?io.streams.compress.Algorithm
+   */
+  public static function select($preferred) {
+    foreach ($preferred as $name) {
+      $lookup= strtolower($name);
+      if ('none' === $lookup || 'identity' === $lookup) return self::$NONE;
+
+      $algorithm= self::$algorithms->find($lookup);
+      if ($algorithm && $algorithm->supported()) return $algorithm;
+    }
+    return null;
+  }
 }

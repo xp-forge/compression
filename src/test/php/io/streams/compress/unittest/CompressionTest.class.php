@@ -56,6 +56,26 @@ class CompressionTest {
     Assert::equals('gzip', Compression::named($name)->name());
   }
 
+  #[Test, Runtime(extensions: ['zlib'])]
+  public function select_gzip() {
+    Assert::equals('gzip', Compression::select(['gzip', 'identity'])->name());
+  }
+
+  #[Test]
+  public function select_no_preference() {
+    Assert::null(Compression::select([]));
+  }
+
+  #[Test]
+  public function select_just_unsupported() {
+    Assert::null(Compression::select(['unsupported']));
+  }
+
+  #[Test]
+  public function select_ignores_unsupported() {
+    Assert::equals(Compression::$NONE, Compression::select(['unsupported', 'identity']));
+  }
+
   #[Test, Values(from: 'names')]
   public function algorithms_named($name, $expected) {
     Assert::equals($expected, Compression::algorithms()->named($name)->name());
