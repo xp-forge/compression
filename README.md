@@ -88,6 +88,7 @@ io.streams.compress.Algorithms@{
   io.streams.compress.Gzip(token: gzip, extension: .gz, supported: true, levels: 1..9)
   io.streams.compress.Bzip2(token: bzip2, extension: .bz2, supported: false, levels: 1..9)
   io.streams.compress.Brotli(token: br, extension: .br, supported: true, levels: 1..11)
+  io.streams.compress.Deflate(token: deflate, extension: (none), supported: true, levels: 1..9)
 }
 ```
 

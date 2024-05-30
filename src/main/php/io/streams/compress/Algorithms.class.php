@@ -20,7 +20,8 @@ class Algorithms implements IteratorAggregate, Value {
     foreach ($algorithms as $algorithm) {
       $name= $algorithm->name();
       $this->set[$name]= $algorithm;
-      $this->lookup[$algorithm->token()]= $this->lookup[$algorithm->extension()]= $name;
+      $this->lookup[$algorithm->token()]= $name;
+      if ('' !== ($ext= $algorithm->extension())) $this->lookup[$ext]= $name;
     }
     return $this;
   }

@@ -38,7 +38,7 @@ class CompressionTest {
     foreach (Compression::algorithms() as $name => $algorithm) {
       $names[]= $name;
     }
-    Assert::equals(['gzip', 'bzip2', 'brotli'], $names);
+    Assert::equals(['gzip', 'bzip2', 'brotli', 'deflate'], $names);
   }
 
   #[Test]
