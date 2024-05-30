@@ -14,6 +14,7 @@ class CompressionTest {
     yield ['gzip', 'gzip'];
     yield ['bzip2', 'bzip2'];
     yield ['brotli', 'brotli'];
+    yield ['deflate', 'deflate'];
 
     // File extensions
     yield ['.gz', 'gzip'];
@@ -61,12 +62,12 @@ class CompressionTest {
     Assert::equals($expected, Compression::algorithms()->named($name)->name());
   }
 
-  #[Test, Values([['gzip', 'zlib'], ['bzip2', 'bzip2'], ['brotli', 'brotli']])]
+  #[Test, Values([['gzip', 'zlib'], ['bzip2', 'bzip2'], ['brotli', 'brotli'], ['deflate', 'zlib']])]
   public function supported($compression, $extension) {
     Assert::equals(extension_loaded($extension), Compression::algorithms()->named($compression)->supported());
   }
 
-  #[Test, Values([['gzip', 'gzip'], ['bzip2', 'bzip2'], ['brotli', 'br']])]
+  #[Test, Values([['gzip', 'gzip'], ['bzip2', 'bzip2'], ['brotli', 'br'], ['deflate', 'deflate']])]
   public function token($compression, $expected) {
     Assert::equals($expected, Compression::algorithms()->named($compression)->token());
   }
