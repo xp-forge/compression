@@ -31,7 +31,7 @@ jobs:
       with:
         php-version: ${{ matrix.php-versions }}
         ini-values: date.timezone=Europe/Berlin
-        extensions: zlib bz2
+        extensions: zlib, bz2
 
     - name: Add Brotli extension (Ubuntu)
       if: runner.os != 'Windows' && matrix.php-versions == '8.4'
