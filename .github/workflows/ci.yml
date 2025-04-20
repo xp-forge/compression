@@ -50,7 +50,7 @@ jobs:
       run: >
         curl -sSL -o brotli.zip https://github.com/kjdev/php-ext-brotli/releases/download/0.15.2%2Bpie/php_brotli-0.15.2+pie-8.4-nts-vs17-x86_64.zip &&
         unzip brotli.zip &&
-        cp *.dll C:/tools/php/ext &&
+        cp *.dll C:/tools/php/ext/php_brotli.dll &&
         echo "extension=brotli" >> C:/tools/php/php.ini
 
     - name: Validate composer.json and composer.lock
