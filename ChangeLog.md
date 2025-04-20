@@ -3,6 +3,9 @@ Compression streams ChangeLog
 
 ## ?.?.? / ????-??-??
 
+* Added `brotli` extension in test suite for Windows and Ubuntu, running
+  the test suite for the newest PHP version with it.
+  (@thekid)
 * Made `Algorithms::remove()` accept names and tokens alongside *Algorithm*
   instances.
   (@thekid)
