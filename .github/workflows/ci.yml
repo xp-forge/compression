@@ -42,8 +42,8 @@ jobs:
         make -j $(nproc) &&
         echo "extension=brotli.so" > brotli.ini &&
         sudo make install &&
-        sudo cp brotli.ini /etc/php/8.4/mods-available/ &&
-        sudo phpenmod brotli
+        sudo cp brotli.ini /etc/php/${{ matrix.php-versions }}/mods-available/ &&
+        sudo phpenmod -v ${{ matrix.php-versions }} brotli
 
     - name: Validate composer.json and composer.lock
       run: composer validate
