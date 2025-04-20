@@ -3,6 +3,10 @@ Compression streams ChangeLog
 
 ## ?.?.? / ????-??-??
 
+* Made `Algorithms::remove()` accept names and tokens alongside *Algorithm*
+  instances.
+  (@thekid)
+
 ## 1.2.0 / 2024-03-24
 
 * Added `DeflatingOutputStream` and `InflatingInputStream` implementations

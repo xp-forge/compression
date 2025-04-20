@@ -94,6 +94,16 @@ class AlgorithmsTest {
   }
 
   #[Test]
+  public function remove_existant_by_name() {
+    Assert::true((new Algorithms())->add($this->supported)->remove($this->supported->name()));
+  }
+
+  #[Test]
+  public function remove_existant_by_token() {
+    Assert::true((new Algorithms())->add($this->supported)->remove($this->supported->token()));
+  }
+
+  #[Test]
   public function remove_non_existant() {
     Assert::false((new Algorithms())->add($this->supported)->remove($this->unsupported));
   }
