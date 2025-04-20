@@ -27,10 +27,19 @@ jobs:
       uses: actions/checkout@v3
 
     - name: Set up PHP ${{ matrix.php-versions }}
+      if: runner.os == 'Windows'
       uses: shivammathur/setup-php@v2
       with:
         php-version: ${{ matrix.php-versions }}
         ini-values: date.timezone=Europe/Berlin
+
+    - name: Set up PHP ${{ matrix.php-versions }}
+      if: runner.os == 'Ubuntu'
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ matrix.php-versions }}
+        ini-values: date.timezone=Europe/Berlin
+        extensions: kjdev/php-ext-brotli@0.15.2+pie
 
     - name: Validate composer.json and composer.lock
       run: composer validate
