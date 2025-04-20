@@ -15,8 +15,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php-versions: ['8.4']
-        os: [ubuntu-latest]
+        php-versions: ['7.0', '7.1', '7.2', '7.3', '7.4', '8.0', '8.1', '8.2', '8.3', '8.4']
+        os: [ubuntu-latest, windows-latest]
 
     steps:
     - name: Configure git
@@ -32,14 +32,14 @@ jobs:
         php-version: ${{ matrix.php-versions }}
         ini-values: date.timezone=Europe/Berlin
 
-    - name: Add Brotli extension
+    - name: Add Brotli extension (Ubuntu)
       if: runner.os != 'Windows' && matrix.php-versions == '8.4'
       run: >
         git clone --recursive --depth=1 https://github.com/kjdev/php-ext-brotli.git &&
         cd php-ext-brotli &&
         phpize &&
         ./configure --enable-brotli &&
-        make &&
+        make -j $(nproc) &&
         echo "extension=brotli.so" > brotli.ini &&
         sudo make install &&
         sudo cp brotli.ini /etc/php/8.4/mods-available/ &&
