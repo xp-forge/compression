@@ -6,7 +6,7 @@ Compression streams
 [![BSD Licence](https://raw.githubusercontent.com/xp-framework/web/master/static/licence-bsd.png)](https://github.com/xp-framework/core/blob/master/LICENCE.md)
 [![Requires PHP 7.0+](https://raw.githubusercontent.com/xp-framework/web/master/static/php-7_0plus.svg)](http://php.net/)
 [![Supports PHP 8.0+](https://raw.githubusercontent.com/xp-framework/web/master/static/php-8_0plus.svg)](http://php.net/)
-[![Latest Stable Version](https://poser.pugx.org/xp-forge/compression/version.png)](https://packagist.org/packages/xp-forge/compression)
+[![Latest Stable Version](https://poser.pugx.org/xp-forge/compression/version.svg)](https://packagist.org/packages/xp-forge/compression)
 
 Compressing output and decompressing input streams including GZip, BZip2 and Brotli.
 
@@ -124,3 +124,7 @@ while ($in->available()) {
 }
 $in->close();
 ```
+
+See also
+--------
+* The PHP RFC [Modern Compression](https://wiki.php.net/rfc/modern_compression) suggests adding *zstd* and *brotli* into PHP.
