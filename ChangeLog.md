@@ -3,6 +3,8 @@ Compression streams ChangeLog
 
 ## ?.?.? / ????-??-??
 
+## 1.3.0 / 2025-04-20
+
 * Added `brotli` extension in test suite for Windows and Ubuntu, running
   the test suite for the newest PHP version with it.
   (@thekid)
