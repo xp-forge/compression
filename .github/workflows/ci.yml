@@ -32,8 +32,8 @@ jobs:
         php-version: ${{ matrix.php-versions }}
         ini-values: date.timezone=Europe/Berlin
 
-    - name: Add Brotli extension
-      if: runner.os != 'Windows' && runner.php-versions == '8.4'
+    - name: Add Brotli extension for ${{ runner.os }}
+      if: runner.os != 'Windows' && matrix.php-versions == '8.4'
       run: >
         git clone --recursive --depth=1 https://github.com/kjdev/php-ext-brotli.git &&
         cd php-ext-brotli &&
