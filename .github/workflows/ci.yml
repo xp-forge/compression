@@ -32,7 +32,7 @@ jobs:
         php-version: ${{ matrix.php-versions }}
         ini-values: date.timezone=Europe/Berlin
 
-    - name: Add Brotli extension for ${{ runner.os }}
+    - name: Add Brotli extension
       if: runner.os != 'Windows' && matrix.php-versions == '8.4'
       run: >
         git clone --recursive --depth=1 https://github.com/kjdev/php-ext-brotli.git &&
@@ -40,8 +40,9 @@ jobs:
         phpize &&
         ./configure --enable-brotli &&
         make &&
+        echo "extension=brotli.so" > brotli.ini &&
         sudo make install &&
-        sudo echo "extension=brotli.so" > /etc/php/8.4/mods-available/brotli.ini &&
+        sudo cp brotli.ini /etc/php/8.4/mods-available/ &&
         sudo phpenmod brotli
 
     - name: Validate composer.json and composer.lock
