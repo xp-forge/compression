@@ -35,12 +35,12 @@ jobs:
     - name: Add Brotli extension
       if: runner.os != 'Windows'
       run: >
-        git clone --recursive --depth=1 https://github.com/kjdev/php-ext-brotli.git
-        cd php-ext-brotli
-        phpize
-        ./configure --enable-brotli
-        make
-        sudo make install
+        git clone --recursive --depth=1 https://github.com/kjdev/php-ext-brotli.git &&
+        cd php-ext-brotli &&
+        phpize &&
+        ./configure --enable-brotli &&
+        make &&
+        sudo make install &&
         sudo phpenmod brotli
 
     - name: Validate composer.json and composer.lock
