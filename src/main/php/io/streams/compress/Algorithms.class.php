@@ -54,12 +54,7 @@ class Algorithms implements IteratorAggregate, Value {
    * @param  string|io.streams.compress.Algorithm $target
    */
   public function remove($target): bool {
-    if ($target instanceof Algorithm) {
-      $algorithm= $this->set[$target->name()] ?? null;
-    } else {
-      $algorithm= $this->set[$target] ?? (($name= $this->lookup[$target] ?? null) ? $this->set[$name] : null);
-    }
-
+    $algorithm= $target instanceof Algorithm ? $this->set[$target->name()] ?? null : $this->find($target);
     if (null === $algorithm) return false;
 
     unset($this->lookup[$algorithm->token()], $this->lookup[$algorithm->extension()]);
