@@ -33,7 +33,7 @@ jobs:
         ini-values: date.timezone=Europe/Berlin
 
     - name: Add Brotli extension
-      if: runner.os != 'Windows'
+      if: runner.os != 'Windows' && runner.php-versions == '8.4'
       run: >
         git clone --recursive --depth=1 https://github.com/kjdev/php-ext-brotli.git &&
         cd php-ext-brotli &&
@@ -41,7 +41,7 @@ jobs:
         ./configure --enable-brotli &&
         make &&
         sudo make install &&
-        sudo echo "extension=brotli.so" > /etc/php/8.4/mods-available &&
+        sudo echo "extension=brotli.so" > /etc/php/8.4/mods-available/brotli.ini &&
         sudo phpenmod brotli
 
     - name: Validate composer.json and composer.lock
