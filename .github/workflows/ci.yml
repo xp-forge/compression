@@ -34,7 +34,7 @@ jobs:
         ini-values: date.timezone=Europe/Berlin
 
     - name: Set up PHP ${{ matrix.php-versions }}
-      if: runner.os == 'Ubuntu'
+      if: runner.os != 'Windows'
       uses: shivammathur/setup-php@v2
       with:
         php-version: ${{ matrix.php-versions }}
