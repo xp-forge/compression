@@ -15,8 +15,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php-versions: ['7.0', '7.1', '7.2', '7.3', '7.4', '8.0', '8.1', '8.2', '8.3', '8.4']
-        os: [ubuntu-latest, windows-latest]
+        php-versions: ['8.4']
+        os: [windows-latest]
 
     steps:
     - name: Configure git
@@ -44,6 +44,14 @@ jobs:
         sudo make install &&
         sudo cp brotli.ini /etc/php/${{ matrix.php-versions }}/mods-available/ &&
         sudo phpenmod -v ${{ matrix.php-versions }} brotli
+
+    - name: Add Brotli extension (Windows)
+      if: runner.os == 'Windows' && matrix.php-versions == '8.4'
+      run: >
+        curl -sSL -o brotli.zip https://github.com/kjdev/php-ext-brotli/releases/download/0.15.2%2Bpie/php_brotli-0.15.2+pie-8.4-nts-vs17-x86_64.zip &&
+        unzip brotli.zip &&
+        cp *.dll C:/tools/php/ext &&
+        echo "extension=brotli" >> C:/tools/php/php.ini
 
     - name: Validate composer.json and composer.lock
       run: composer validate
