@@ -3,6 +3,8 @@ Compression streams ChangeLog
 
 ## ?.?.? / ????-??-??
 
+* Fixed calling `available()` after close throwing an error - @thekid
+
 ## 1.3.0 / 2025-04-20
 
 * Added `brotli` extension in test suite for Windows and Ubuntu, running

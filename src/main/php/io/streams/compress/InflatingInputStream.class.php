@@ -40,7 +40,7 @@ class InflatingInputStream implements InputStream {
    *
    */
   public function available() {
-    return feof($this->in) ? 0 : 1;
+    return (int)($this->in && !feof($this->in));
   }
 
   /**
