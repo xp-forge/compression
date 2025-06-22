@@ -3,6 +3,8 @@ Compression streams ChangeLog
 
 ## ?.?.? / ????-??-??
 
+## 1.3.1 / 2025-06-22
+
 * Added PHP 8.5 to the test matrix - @thekid
 * Fixed calling `available()` after close throwing an error - @thekid
 
