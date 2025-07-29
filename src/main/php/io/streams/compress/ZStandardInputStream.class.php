@@ -11,8 +11,7 @@ use io\streams\InputStream;
  * @see  https://github.com/kjdev/php-ext-zstd
  */
 class ZStandardInputStream implements InputStream {
-  private $in;
-  private $buffer= null, $position= 0;
+  private $in, $handle;
 
   /**
    * Creates a new compressing output stream
@@ -21,24 +20,7 @@ class ZStandardInputStream implements InputStream {
    */
   public function __construct(InputStream $in) {
     $this->in= $in;
-  }
-
-  /** @see https://github.com/kjdev/php-ext-zstd/issues/64 */
-  private function buffer() {
-    if (null === $this->buffer) {
-      $compressed= '';
-      while ($this->in->available()) {
-        $compressed.= $this->in->read();
-      }
-
-      $this->buffer= zstd_uncompress($compressed);
-      if (false === $this->buffer) {
-        $e= new IOException('Failed to uncompress');
-        \xp::gc(__FILE__);
-        throw $e;
-      }
-    }
-    return $this->buffer;
+    $this->handle= zstd_uncompress_init();
   }
 
   /**
@@ -48,9 +30,13 @@ class ZStandardInputStream implements InputStream {
    * @return  string
    */
   public function read($limit= 8192) {
-    $chunk= substr($this->buffer(), $this->position, $limit);
-    $this->position+= strlen($chunk);
-    return $chunk;
+    $bytes= zstd_uncompress_add($this->handle, $this->in->read($limit));
+    if (false === $bytes) {
+      $e= new IOException('Failed to uncompress');
+      \xp::gc(__FILE__);
+      throw $e;
+    }
+    return $bytes;
   }
 
   /**
@@ -60,7 +46,7 @@ class ZStandardInputStream implements InputStream {
    * @return int
    */
   public function available() {
-    return strlen($this->buffer()) - $this->position;
+    return $this->in->available();
   }
 
   /**
@@ -69,8 +55,10 @@ class ZStandardInputStream implements InputStream {
    * @return void
    */
   public function close() {
-    $this->buffer= null;
-    $this->in->close();
+    if ($this->handle) {
+      $this->handle= null;
+      $this->in->close();
+    }
   }
   
   /**

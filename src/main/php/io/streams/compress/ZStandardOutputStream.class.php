@@ -11,8 +11,7 @@ use lang\IllegalArgumentException;
  * @see  https://github.com/kjdev/php-ext-zstd
  */
 class ZStandardOutputStream implements OutputStream {
-  private $out, $level;
-  private $buffer= '';
+  private $out, $handle;
 
   /**
    * Creates a new compressing output stream
@@ -27,7 +26,7 @@ class ZStandardOutputStream implements OutputStream {
     }
 
     $this->out= $out;
-    $this->level= $level;
+    $this->handle= zstd_compress_init($level);
   }
 
   /**
@@ -37,7 +36,7 @@ class ZStandardOutputStream implements OutputStream {
    * @return void
    */
   public function write($arg) {
-    $this->buffer.= $arg;
+    $this->out->write(zstd_compress_add($this->handle, $arg, false));
   }
 
   /**
@@ -57,9 +56,9 @@ class ZStandardOutputStream implements OutputStream {
    * @return void
    */
   public function close() {
-    if (null !== $this->buffer) {
-      $this->out->write(zstd_compress($this->buffer, $this->level));
-      $this->buffer= null;
+    if (null !== $this->handle) {
+      $this->out->write(zstd_compress_add($this->handle, '', true));
+      $this->handle= null;
     }
   }
 }
