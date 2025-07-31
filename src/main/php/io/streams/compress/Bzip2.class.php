@@ -1,11 +1,12 @@
 <?php namespace io\streams\compress;
 
+use io\IOException;
 use io\streams\{InputStream, OutputStream, Compression};
 
 class Bzip2 extends Algorithm {
 
   /** Returns whether this algorithm is supported in the current setup */
-  public function supported(): bool { return extension_loaded('bzip2'); }
+  public function supported(): bool { return extension_loaded('bz2'); }
 
   /** Returns the algorithm's name */
   public function name(): string { return 'bzip2'; }
@@ -29,7 +30,11 @@ class Bzip2 extends Algorithm {
 
   /** Decompresses bytes */
   public function decompress(string $bytes): string {
-    return bzdecompress($bytes);
+    if (is_string($data= bzdecompress($bytes))) return $data;
+
+    $e= new IOException('Decompression failed ('.(false === $data ? 'general error' : 'error #'.$data).')');
+    \xp::gc(__FILE__);
+    throw $e;
   }
 
   /** Opens an input stream for reading */
