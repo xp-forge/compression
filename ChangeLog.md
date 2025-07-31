@@ -3,6 +3,11 @@ Compression streams ChangeLog
 
 ## ?.?.? / ????-??-??
 
+## 1.4.0 / 2025-07-31
+
+* Merged PR #9: Add `Algorithm::compress()` and `Algorithm::decompress()`
+  (@thekid)
+
 ## 1.3.2 / 2025-07-31
 
 * Fixed *Bzip2* availability check, the PHP extension is called `bz2`.
