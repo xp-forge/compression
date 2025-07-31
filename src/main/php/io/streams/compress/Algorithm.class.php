@@ -20,6 +20,12 @@ abstract class Algorithm implements Value {
   /** Maps fastest, default and strongest levels */
   public abstract function level(int $select): int;
 
+  /** Compresses data */
+  public abstract function compress(string $data, int $level= Compression::DEFAULT): string;
+
+  /** Decompresses bytes */
+  public abstract function decompress(string $bytes): string;
+
   /** Opens an input stream for reading */
   public abstract function open(InputStream $in): InputStream;
 

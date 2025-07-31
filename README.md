@@ -54,7 +54,15 @@ use io\streams\{Compression, FileInputStream, FileOutputStream};
 // if the required "bzip2" extension is not loaded
 $compressed= Compression::named('bzip2');
 
-// Read
+// Compress and decompress
+$bytes= $compressed->compress('Test', Compression::STRONGEST);
+$test= $compressed->decompress($bytes);
+```
+
+Continuing the above example using streams:
+
+```php
+// Read from a file
 $bytes= '';
 $in= $compressed->open(new FileInputStream($file));
 while ($in->available()) {

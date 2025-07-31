@@ -1,5 +1,6 @@
 <?php namespace io\streams\compress;
 
+use io\IOException;
 use io\streams\{InputStream, OutputStream, Compression};
 
 class Gzip extends Algorithm {
@@ -20,6 +21,21 @@ class Gzip extends Algorithm {
   public function level(int $select): int {
     static $levels= [Compression::FASTEST => 1, Compression::DEFAULT => 6, Compression::STRONGEST => 9];
     return $levels[$select] ?? $select;
+  }
+
+  /** Compresses data */
+  public function compress(string $data, int $level= Compression::DEFAULT): string {
+    return gzcompress($data, $this->level($level));
+  }
+
+  /** Decompresses bytes */
+  public function decompress(string $bytes): string {
+    if (false === ($data= gzuncompress($bytes))) {
+      $e= new IOException('Decompression failed');
+      \xp::gc(__FILE__);
+      throw $e;
+    }
+    return $data;
   }
 
   /** Opens an input stream for reading */

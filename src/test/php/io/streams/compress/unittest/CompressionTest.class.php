@@ -1,5 +1,6 @@
 <?php namespace io\streams\compress\unittest;
 
+use io\IOException;
 use io\streams\{Compression, MemoryInputStream, MemoryOutputStream, Streams};
 use lang\IllegalArgumentException;
 use test\verify\Runtime;
@@ -29,6 +30,23 @@ class CompressionTest {
     yield [Compression::$NONE];
     foreach (Compression::algorithms()->supported() as $algorithm) {
       yield [$algorithm];
+    }
+  }
+
+  /** @return iterable */
+  private function erroneous() {
+    $algorithms= Compression::algorithms();
+
+    $gzip= $algorithms->named('gzip');
+    if ($gzip->supported()) {
+      yield [$gzip, "\037\213\b\000\000\000\000\000\000\n<Plain data>"];
+    }
+
+    // PHP 7.4RC1 is the first version to handle reading errors correctly, see
+    // https://github.com/php/php-src/commit/d59aac58b3e7da7ad01a194fe9840d89725ea229
+    $bzip2= $algorithms->named('bzip2');
+    if ($bzip2->supported() && PHP_VERSION_ID >= 70400) {
+      yield [$bzip2, "BZh61AY&SY\331<Plain data>"];
     }
   }
 
@@ -82,7 +100,15 @@ class CompressionTest {
   }
 
   #[Test, Values(from: 'algorithms')]
-  public function roundtrip($compressed) {
+  public function compress_roundtrip($compressed) {
+    $bytes= $compressed->compress('Test', Compression::DEFAULT);
+    $result= $compressed->decompress($bytes);
+
+    Assert::equals('Test', $result);
+  }
+
+  #[Test, Values(from: 'algorithms')]
+  public function streams_roundtrip($compressed) {
     $target= new MemoryOutputStream();
 
     $out= $compressed->create($target, Compression::DEFAULT);
@@ -94,5 +120,10 @@ class CompressionTest {
     $in->close();
 
     Assert::equals('Test', $result);
+  }
+
+  #[Test, Values(from: 'erroneous'), Expect(IOException::class)]
+  public function decompress_erroneous($compressed, $bytes) {
+    $compressed->decompress($bytes);
   }
 }
