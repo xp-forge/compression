@@ -1,5 +1,6 @@
 <?php namespace io\streams\compress;
 
+use io\IOException;
 use io\streams\{InputStream, OutputStream, Compression};
 
 class Brotli extends Algorithm {
@@ -29,7 +30,12 @@ class Brotli extends Algorithm {
 
   /** Decompresses bytes */
   public function decompress(string $bytes): string {
-    return brotli_uncompress($bytes);
+    if (false === ($data= brotli_uncompress($bytes))) {
+      $e= new IOException('Decompression failed');
+      \xp::gc(__FILE__);
+      throw $e;
+    }
+    return $data;
   }
 
   /** Opens an input stream for reading */
