@@ -22,6 +22,16 @@ class Gzip extends Algorithm {
     return $levels[$select] ?? $select;
   }
 
+  /** Compresses data */
+  public function compress(string $data, int $level= Compression::DEFAULT): string {
+    return gzcompress($data, $this->level($level));
+  }
+
+  /** Decompresses bytes */
+  public function decompress(string $bytes): string {
+    return gzuncompress($bytes);
+  }
+
   /** Opens an input stream for reading */
   public function open(InputStream $in): InputStream {
     return new GzipInputStream($in);
