@@ -1,11 +1,12 @@
 <?php namespace io\streams\compress;
 
+use io\IOException;
 use io\streams\{InputStream, OutputStream, Compression};
 
 class Bzip2 extends Algorithm {
 
   /** Returns whether this algorithm is supported in the current setup */
-  public function supported(): bool { return extension_loaded('bzip2'); }
+  public function supported(): bool { return extension_loaded('bz2'); }
 
   /** Returns the algorithm's name */
   public function name(): string { return 'bzip2'; }
@@ -20,6 +21,20 @@ class Bzip2 extends Algorithm {
   public function level(int $select): int {
     static $levels= [Compression::FASTEST => 1, Compression::DEFAULT => 4, Compression::STRONGEST => 9];
     return $levels[$select] ?? $select;
+  }
+
+  /** Compresses data */
+  public function compress(string $data, int $level= Compression::DEFAULT): string {
+    return bzcompress($data, $this->level($level));
+  }
+
+  /** Decompresses bytes */
+  public function decompress(string $bytes): string {
+    if (is_string($data= bzdecompress($bytes))) return $data;
+
+    $e= new IOException('Decompression failed ('.(false === $data ? 'general error' : 'error #'.$data).')');
+    \xp::gc(__FILE__);
+    throw $e;
   }
 
   /** Opens an input stream for reading */

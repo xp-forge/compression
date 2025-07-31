@@ -19,6 +19,12 @@ class None extends Algorithm {
   /** Returns fastest, default and strongest levels */
   public function level(int $select): int { return 0; }
 
+  /** Compresses data */
+  public function compress(string $data, int $level= Compression::DEFAULT): string { return $data; }
+
+  /** Decompresses bytes */
+  public function decompress(string $bytes): string { return $bytes; }
+
   /** Opens an input stream for reading */
   public function open(InputStream $in): InputStream {
     return $in;

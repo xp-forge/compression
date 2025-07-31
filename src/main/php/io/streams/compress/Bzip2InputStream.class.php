@@ -50,7 +50,7 @@ class Bzip2InputStream implements InputStream {
    * @return int
    */
   public function available() {
-    return feof($this->fd) ? 0 : 1;
+    return (int)($this->fd && !feof($this->fd));
   }
 
   /**

@@ -84,4 +84,12 @@ abstract class DecompressingInputStreamTest {
     $fixture->close();
     $fixture->close();
   }
+
+  #[Test]
+  public function available_after_close() {
+    $fixture= $this->fixture(new MemoryInputStream($this->compress('Hello', 1)));
+    $fixture->close();
+
+    Assert::equals(0, $fixture->available());
+  }
 }

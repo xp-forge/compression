@@ -15,6 +15,8 @@ class AlgorithmsTest {
       public function token(): string { return 'x-test'; }
       public function extension(): string { return '.test'; }
       public function level(int $select): int { return $select; }
+      public function compress(string $data, int $level= Compression::DEFAULT): string { return $data; }
+      public function decompress(string $bytes): string { return $bytes; }
       public function open(InputStream $in): InputStream { return $in; }
       public function create(OutputStream $out, int $method= Compression::DEFAULT): OutputStream { return $out; }
     };
@@ -24,6 +26,8 @@ class AlgorithmsTest {
       public function token(): string { return 'x-add'; }
       public function extension(): string { return '.add'; }
       public function level(int $select): int { return $select; }
+      public function compress(string $data, int $level= Compression::DEFAULT): string { return $data; }
+      public function decompress(string $bytes): string { return $bytes; }
       public function open(InputStream $in): InputStream { return $in; }
       public function create(OutputStream $out, int $method= Compression::DEFAULT): OutputStream { return $out; }
     };
@@ -33,6 +37,8 @@ class AlgorithmsTest {
       public function token(): string { return 'compress'; }
       public function extension(): string { return '.lz'; }
       public function level(int $select): int { return $select; }
+      public function compress(string $data, int $level= Compression::DEFAULT): string { return $data; }
+      public function decompress(string $bytes): string { return $bytes; }
       public function open(InputStream $in): InputStream { return $in; }
       public function create(OutputStream $out, int $method= Compression::DEFAULT): OutputStream { return $out; }
     };
@@ -91,6 +97,16 @@ class AlgorithmsTest {
   #[Test]
   public function remove_existant() {
     Assert::true((new Algorithms())->add($this->supported)->remove($this->supported));
+  }
+
+  #[Test]
+  public function remove_existant_by_name() {
+    Assert::true((new Algorithms())->add($this->supported)->remove($this->supported->name()));
+  }
+
+  #[Test]
+  public function remove_existant_by_token() {
+    Assert::true((new Algorithms())->add($this->supported)->remove($this->supported->token()));
   }
 
   #[Test]

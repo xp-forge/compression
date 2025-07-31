@@ -3,6 +3,30 @@ Compression streams ChangeLog
 
 ## ?.?.? / ????-??-??
 
+## 1.4.0 / 2025-07-31
+
+* Merged PR #9: Add `Algorithm::compress()` and `Algorithm::decompress()`
+  (@thekid)
+
+## 1.3.2 / 2025-07-31
+
+* Fixed *Bzip2* availability check, the PHP extension is called `bz2`.
+  (@thekid)
+
+## 1.3.1 / 2025-06-22
+
+* Added PHP 8.5 to the test matrix - @thekid
+* Fixed calling `available()` after close throwing an error - @thekid
+
+## 1.3.0 / 2025-04-20
+
+* Added `brotli` extension in test suite for Windows and Ubuntu, running
+  the test suite for the newest PHP version with it.
+  (@thekid)
+* Made `Algorithms::remove()` accept names and tokens alongside *Algorithm*
+  instances.
+  (@thekid)
+
 ## 1.2.0 / 2024-03-24
 
 * Added `DeflatingOutputStream` and `InflatingInputStream` implementations
