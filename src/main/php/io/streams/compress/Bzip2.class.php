@@ -5,7 +5,7 @@ use io\streams\{InputStream, OutputStream, Compression};
 class Bzip2 extends Algorithm {
 
   /** Returns whether this algorithm is supported in the current setup */
-  public function supported(): bool { return extension_loaded('bzip2'); }
+  public function supported(): bool { return extension_loaded('bz2'); }
 
   /** Returns the algorithm's name */
   public function name(): string { return 'bzip2'; }

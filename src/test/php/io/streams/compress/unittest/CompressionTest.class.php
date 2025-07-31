@@ -61,7 +61,7 @@ class CompressionTest {
     Assert::equals($expected, Compression::algorithms()->named($name)->name());
   }
 
-  #[Test, Values([['gzip', 'zlib'], ['bzip2', 'bzip2'], ['brotli', 'brotli']])]
+  #[Test, Values([['gzip', 'zlib'], ['bzip2', 'bz2'], ['brotli', 'brotli']])]
   public function supported($compression, $extension) {
     Assert::equals(extension_loaded($extension), Compression::algorithms()->named($compression)->supported());
   }

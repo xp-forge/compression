@@ -3,6 +3,11 @@ Compression streams ChangeLog
 
 ## ?.?.? / ????-??-??
 
+## 1.3.2 / 2025-07-31
+
+* Fixed *Bzip2* availability check, the PHP extension is called `bz2`.
+  (@thekid)
+
 ## 1.3.1 / 2025-06-22
 
 * Added PHP 8.5 to the test matrix - @thekid
