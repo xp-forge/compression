@@ -22,6 +22,16 @@ class ZStandard extends Algorithm {
     return $levels[$select] ?? $select;
   }
 
+  /** Compresses data */
+  public function compress(string $data, int $level= Compression::DEFAULT): string {
+    return zstd_compress($data, $this->level($level));
+  }
+
+  /** Decompresses bytes */
+  public function decompress(string $bytes): string {
+    return zstd_uncompress($bytes);
+  }
+
   /** Opens an input stream for reading */
   public function open(InputStream $in): InputStream {
     return new ZStandardInputStream($in);
