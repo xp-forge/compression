@@ -51,6 +51,11 @@ class CompressionTest {
     if ($bzip2->supported() && PHP_VERSION_ID >= 70400) {
       yield [$bzip2, "BZh61AY&SY\331<Plain data>"];
     }
+
+    $zstd= $algorithms->named('zstd');
+    if ($zstd->supported()) {
+      yield [$zstd, "<Plain data>"];
+    }
   }
 
   #[Test]
