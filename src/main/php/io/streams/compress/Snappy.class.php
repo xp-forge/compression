@@ -157,21 +157,21 @@ class Snappy extends Algorithm {
     }
 
     // Decompress using literal and copy operations
-    $end= strlen($bytes);
-    while ($pos < $end) {
+    $limit= strlen($bytes);
+    while ($pos < $limit) {
       $c= ord($bytes[$pos++]);
       switch ($c & 0x03) {
         case 0:
           $l= 1 + ($c >> 2);
           if ($l > 60) {
-            if ($pos + 3 >= $end) throw new IOException('Position out of range');
+            if ($pos + 3 >= $limit) throw new IOException('Position out of range');
 
             $s= $l - 60;
             $l= unpack('V', $bytes, $pos)[1];
             $l= ($l & self::WORD_MASK[$s]) + 1;
             $pos+= $s;
           }
-          if ($pos + $l > $end) throw new IOException('Not enough input for literal, expecting '.$l);
+          if ($pos + $l > $limit) throw new IOException('Not enough input for literal, expecting '.$l);
 
           $out.= substr($bytes, $pos, $l);
           $pos+= $l;
@@ -187,7 +187,7 @@ class Snappy extends Algorithm {
           break;
 
         case 2:
-          if ($pos + 1 >= $end) throw new IOException('Position out of range');
+          if ($pos + 1 >= $limit) throw new IOException('Position out of range');
 
           $l= 1 + ($c >> 2);
           $offset= unpack('v', $bytes, $pos)[1];
@@ -198,7 +198,7 @@ class Snappy extends Algorithm {
           break;
 
         case 3:
-          if ($pos + 3 >= $end) throw new IOException('Position out of range');
+          if ($pos + 3 >= $limit) throw new IOException('Position out of range');
 
           $l= 1 + ($c >> 2);
           $offset= unpack('V', $bytes, $pos)[1];
@@ -223,23 +223,7 @@ class Snappy extends Algorithm {
 
   /** Opens an input stream for reading */
   public function open(InputStream $in): InputStream {
-
-    // FIXME Solve this without buffering
-    $bytes= '';
-    while ($in->available()) {
-      $bytes.= $in->read();
-    }
-    return newinstance(InputStream::class, [], [
-      'pos'       => 0,
-      'bytes'     => $this->decompress($bytes),
-      'available' => function() { return strlen($this->bytes) - $this->pos; },
-      'read'      => function($limit= 4096) {
-        $chunk= substr($this->bytes, $this->pos, $limit);
-        $this->pos+= strlen($chunk);
-        return $chunk;
-      },
-      'close'     => function() { }
-    ]);
+    return new SnappyInputStream($in);
   }
 
   /** Opens an output stream for writing */
