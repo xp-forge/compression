@@ -5,6 +5,8 @@ use io\streams\InputStream;
 
 /**
  * Snappy input stream
+ *
+ * @test  io.streams.compress.unittest.SnappyInputStreamTest
  */
 class SnappyInputStream implements InputStream {
   private $in, $out;
