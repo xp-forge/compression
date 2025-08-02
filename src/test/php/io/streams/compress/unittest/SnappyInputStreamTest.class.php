@@ -31,6 +31,11 @@ class SnappyInputStreamTest {
   }
 
   #[Test, Expect(IOException::class)]
+  public function from_empty() {
+    Streams::readAll($this->fixture(''));
+  }
+
+  #[Test, Expect(IOException::class)]
   public function not_enough_input() {
     Streams::readAll($this->fixture("\x01"));
   }

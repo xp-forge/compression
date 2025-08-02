@@ -48,6 +48,11 @@ class CompressionTest {
     if ($bzip2->supported() && PHP_VERSION_ID >= 70400) {
       yield [$bzip2, "BZh61AY&SY\331<Plain data>"];
     }
+
+    $snappy= $algorithms->named('snappy');
+    if ($snappy->supported()) {
+      yield [$snappy, "\002"];
+    }
   }
 
   #[Test]
