@@ -3,6 +3,10 @@ Compression streams ChangeLog
 
 ## ?.?.? / ????-??-??
 
+* Merged PR #8: Add ZStandard compression, based on the `zstd` extension
+  from https://github.com/kjdev/php-ext-zstd/ - see issue #7.
+  (@thekid)
+
 ## 1.4.0 / 2025-07-31
 
 * Merged PR #9: Add `Algorithm::compress()` and `Algorithm::decompress()`
