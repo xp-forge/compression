@@ -207,9 +207,6 @@ class Snappy extends Algorithm {
           }
           $pos+= 4;
           break;
-
-        default:
-          throw new IOException('Unexpected operation '.($c & 0x3));
       }
     }
 

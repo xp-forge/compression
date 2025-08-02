@@ -96,9 +96,6 @@ class SnappyInputStream implements InputStream {
             $this->out.= $this->out[$end + $i];
           }
           break;
-
-        default:
-          throw new IOException('Unexpected operation '.($c & 0x3));
       }
       $pos+= $l;
     }
