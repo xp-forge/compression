@@ -22,7 +22,7 @@ abstract class Compression {
     self::$NONE= new None();
 
     // Register known algorithms included in this library
-    self::$algorithms= (new Algorithms())->add(new Gzip(), new Bzip2(), new Brotli()));
+    self::$algorithms= (new Algorithms())->add(new Gzip(), new Bzip2(), new Brotli());
   }
 
   /**
