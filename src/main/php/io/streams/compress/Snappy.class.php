@@ -31,7 +31,7 @@ class Snappy extends Algorithm {
     static $literal, $copy;
 
     // Helper functions
-    $literal??= function($l) {
+    $literal ?? $literal= function($l) {
       if ($l <= 60) {
         return chr(($l - 1) << 2);
       } else if ($l < 256) {
@@ -40,7 +40,7 @@ class Snappy extends Algorithm {
         return pack('CCC', 61 << 2, ($l - 1) & 0xff, (($l - 1) & 0xffffffff) >> 8);
       }
     };
-    $copy??= function($i, $l) {
+    $copy ?? $copy= function($i, $l) {
       if ($l < 12 && $i < 2048) {
         return pack('CC', 1 + (($l - 4) << 2) + ((($i & 0xffffffff) >> 8) << 5), $i & 0xff);
       } else {
