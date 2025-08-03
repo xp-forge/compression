@@ -18,26 +18,6 @@ class SnappyOutputStream implements OutputStream {
     $this->out->write(Snappy::length($length));
   }
 
-  /** Encode literal operation */
-  private function literal(int $l): string {
-    if ($l <= 60) {
-      return chr(($l - 1) << 2);
-    } else if ($l < 256) {
-      return pack('CC', 60 << 2, $l - 1);
-    } else {
-      return pack('CCC', 61 << 2, ($l - 1) & 0xff, (($l - 1) & 0xffffffff) >> 8);
-    }
-  }
-
-  /** Encode copy operation */
-  private function copy(int $i, int $l): string {
-    if ($l < 12 && $i < 2048) {
-      return pack('CC', 1 + (($l - 4) << 2) + ((($i & 0xffffffff) >> 8) << 5), $i & 0xff);
-    } else {
-      return pack('CCC', 2 + (($l - 1) << 2), $i & 0xff, ($i & 0xffffffff) >> 8);
-    }
-  }
-
   /** Compare 4-byte offsets in data at offsets a and b */
   private function equals32(int $a, int $b): bool {
     return (
@@ -81,7 +61,7 @@ class SnappyOutputStream implements OutputStream {
         $hashtable[$hash]= $pos & 0xffff;
       } while (!$this->equals32($pos, $candidate));
 
-      $out.= $this->literal($pos - $emit).substr($this->buffer, $emit, $pos - $emit);
+      $out.= Snappy::literal($pos - $emit).substr($this->buffer, $emit, $pos - $emit);
 
       // Emit copy instructions
       do {
@@ -93,14 +73,14 @@ class SnappyOutputStream implements OutputStream {
         $pos+= $matched;
 
         while ($matched >= 68) {
-          $out.= $this->copy($offset, 64);
+          $out.= Snappy::copy($offset, 64);
           $matched-= 64;
         }
         if ($matched > 64) {
-          $out.= $this->copy($offset, 60);
+          $out.= Snappy::copy($offset, 60);
           $matched-= 60;
         }
-        $out.= $this->copy($offset, $matched);
+        $out.= Snappy::copy($offset, $matched);
         $emit= $pos;
 
         if ($pos >= $limit) goto emit;
@@ -118,7 +98,7 @@ class SnappyOutputStream implements OutputStream {
     }
 
     emit: if ($emit < $end) {
-      $out.= $this->literal($end - $emit).substr($this->buffer, $emit, $end - $emit);
+      $out.= Snappy::literal($end - $emit).substr($this->buffer, $emit, $end - $emit);
     }
 
     $this->buffer= substr($this->buffer, $end);

@@ -25,7 +25,7 @@ class Snappy extends Algorithm {
   /** Maps fastest, default and strongest levels */
   public function level(int $select): int { return 0; }
 
-  /** Output length as varint */
+  /** Encode length as varint */
   public static function length(int $length): string {
     $out= '';
 
@@ -39,29 +39,30 @@ class Snappy extends Algorithm {
     return $out.chr($l);
   }
 
+  /** Encode literal operation */
+  public static function literal(int $l): string {
+    if ($l <= 60) {
+      return chr(($l - 1) << 2);
+    } else if ($l < 256) {
+      return pack('CC', 60 << 2, $l - 1);
+    } else {
+      return pack('CCC', 61 << 2, ($l - 1) & 0xff, (($l - 1) & 0xffffffff) >> 8);
+    }
+  }
+
+  /** Encode copy operation */
+  public static function copy(int $i, int $l): string {
+    if ($l < 12 && $i < 2048) {
+      return pack('CC', 1 + (($l - 4) << 2) + ((($i & 0xffffffff) >> 8) << 5), $i & 0xff);
+    } else {
+      return pack('CCC', 2 + (($l - 1) << 2), $i & 0xff, ($i & 0xffffffff) >> 8);
+    }
+  }
+
   /** Compresses data */
   public function compress(string $data, $options= null): string {
-    static $literal, $copy;
 
-    // Helper functions
-    $literal ?? $literal= function($l) {
-      if ($l <= 60) {
-        return chr(($l - 1) << 2);
-      } else if ($l < 256) {
-        return pack('CC', 60 << 2, $l - 1);
-      } else {
-        return pack('CCC', 61 << 2, ($l - 1) & 0xff, (($l - 1) & 0xffffffff) >> 8);
-      }
-    };
-    $copy ?? $copy= function($i, $l) {
-      if ($l < 12 && $i < 2048) {
-        return pack('CC', 1 + (($l - 4) << 2) + ((($i & 0xffffffff) >> 8) << 5), $i & 0xff);
-      } else {
-        return pack('CCC', 2 + (($l - 1) << 2), $i & 0xff, ($i & 0xffffffff) >> 8);
-      }
-    };
-
-    // Compare 4-byte offsets in data at offsets a and b
+    // Inlined comparison of 4-byte offsets in data at offsets a and b
     $equals32= fn($a, $b) => (
       $data[$a] === $data[$b] &&
       $data[$a + 1] === $data[$b + 1] &&
@@ -103,7 +104,7 @@ class Snappy extends Algorithm {
           $hashtable[$hash]= ($pos - $start) & 0xffff;
         } while (!$equals32($pos, $candidate));
 
-        $out.= $literal($pos - $emit).substr($data, $emit, $pos - $emit);
+        $out.= self::literal($pos - $emit).substr($data, $emit, $pos - $emit);
 
         // Emit copy instructions
         do {
@@ -115,14 +116,14 @@ class Snappy extends Algorithm {
           $pos+= $matched;
 
           while ($matched >= 68) {
-            $out.= $copy($offset, 64);
+            $out.= self::copy($offset, 64);
             $matched-= 64;
           }
           if ($matched > 64) {
-            $out.= $copy($offset, 60);
+            $out.= self::copy($offset, 60);
             $matched-= 60;
           }
-          $out.= $copy($offset, $matched);
+          $out.= self::copy($offset, $matched);
           $emit= $pos;
 
           if ($pos >= $limit) goto emit;
@@ -140,7 +141,7 @@ class Snappy extends Algorithm {
       }
 
       emit: if ($emit < $end) {
-        $out.= $literal($end - $emit).substr($data, $emit, $end - $emit);
+        $out.= self::literal($end - $emit).substr($data, $emit, $end - $emit);
       }
     }
 
