@@ -25,6 +25,20 @@ class Snappy extends Algorithm {
   /** Maps fastest, default and strongest levels */
   public function level(int $select): int { return 0; }
 
+  /** Output length as varint */
+  public static function length(int $length): string {
+    $out= '';
+
+    shift: $l= $length & 0x7f;
+    $length= ($length & 0xffffffff) >> 7;
+    if ($length > 0) {
+      $out.= chr($l + 0x80);
+      goto shift;
+    }
+
+    return $out.chr($l);
+  }
+
   /** Compresses data */
   public function compress(string $data, int $level= Compression::DEFAULT): string {
     static $literal, $copy;
@@ -47,18 +61,6 @@ class Snappy extends Algorithm {
       }
     };
 
-    $out= '';
-
-    // Output length as varint
-    $length= strlen($data);
-    shift: $l= $length & 0x7f;
-    $length= ($length & 0xffffffff) >> 7;
-    if ($length > 0) {
-      $out.= chr($l + 0x80);
-      goto shift;
-    }
-    $out.= chr($l);
-
     // Compare 4-byte offsets in data at offsets a and b
     $equals32= function($a, $b) use(&$data) {
       return (
@@ -69,6 +71,7 @@ class Snappy extends Algorithm {
       );
     };
 
+    $out= self::length(strlen($data));
     for ($emit= $pos= 0, $end= $length= strlen($data); $pos < $length; $pos= $end) {
       $fragment= min($length - $pos, self::BLOCK_SIZE);
       $end= $pos + $fragment;
