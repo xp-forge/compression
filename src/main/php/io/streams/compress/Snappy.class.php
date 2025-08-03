@@ -40,7 +40,7 @@ class Snappy extends Algorithm {
   }
 
   /** Compresses data */
-  public function compress(string $data, int $level= Compression::DEFAULT): string {
+  public function compress(string $data, $options= null): string {
     static $literal, $copy;
 
     // Helper functions
@@ -228,7 +228,7 @@ class Snappy extends Algorithm {
   }
 
   /** Opens an output stream for writing */
-  public function create(OutputStream $out, int $level= Compression::DEFAULT): OutputStream {
+  public function create(OutputStream $out, $options= null): OutputStream {
 
     // FIXME Solve this without buffering
     $self= $this;
