@@ -42,10 +42,8 @@ class CompressionTest {
       yield [$gzip, "\037\213\b\000\000\000\000\000\000\n<Plain data>"];
     }
 
-    // PHP 7.4RC1 is the first version to handle reading errors correctly, see
-    // https://github.com/php/php-src/commit/d59aac58b3e7da7ad01a194fe9840d89725ea229
     $bzip2= $algorithms->named('bzip2');
-    if ($bzip2->supported() && PHP_VERSION_ID >= 70400) {
+    if ($bzip2->supported()) {
       yield [$bzip2, "BZh61AY&SY\331<Plain data>"];
     }
   }
