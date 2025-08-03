@@ -51,70 +51,87 @@ class SnappyOutputStream implements OutputStream {
   /** Compresses a fragment and returns last emitted position */
   private function fragment() {
     $end= min(strlen($this->buffer), Snappy::BLOCK_SIZE);
-    if ($end <= Snappy::INPUT_MARGIN) return 0;
-
     $pos= $emit= 0;
-    $bits= 1;
-    while ((1 << $bits) <= $end && $bits <= Snappy::HASH_BITS) {
-      $bits++;
+    $out= '';
+
+    // Compare 4-byte offsets in data at offsets a and b
+    $equals32= fn($a, $b) => (
+      $this->buffer[$a] === $this->buffer[$b] &&
+      $this->buffer[$a + 1] === $this->buffer[$b + 1] &&
+      $this->buffer[$a + 2] === $this->buffer[$b + 2] &&
+      $this->buffer[$a + 3] === $this->buffer[$b + 3]
+    );
+
+    if ($end >= Snappy::INPUT_MARGIN) {
+      $bits= 1;
+      while ((1 << $bits) <= $end && $bits <= Snappy::HASH_BITS) {
+        $bits++;
+      }
+      $bits--;
+      $shift= 32 - $bits;
+      $hashtable= array_fill(0, 1 << $bits, 0);
+
+      $start= $pos;
+      $limit= $end - Snappy::INPUT_MARGIN;
+      $next= ((unpack('V', $this->buffer, ++$pos)[1] * Snappy::HASH_KEY) & 0xffffffff) >> $shift;
+
+      // Emit literals
+      next: $forward= $pos;
+      $skip= 32;
+      do {
+        $pos= $forward;
+        $hash= $next;
+        $forward+= ($skip & 0xffffffff) >> 5;
+        $skip++;
+        if ($pos > $limit || $forward > $limit) goto emit;
+
+        $next= ((unpack('V', $this->buffer, $forward)[1] * Snappy::HASH_KEY) & 0xffffffff) >> $shift;
+        $candidate= $start + $hashtable[$hash];
+        $hashtable[$hash]= ($pos - $start) & 0xffff;
+      } while (!$equals32($pos, $candidate));
+
+      $out.= $this->literal($pos - $emit).substr($this->buffer, $emit, $pos - $emit);
+
+      // Emit copy instructions
+      do {
+        $offset= $pos - $candidate;
+        $matched= 4;
+        while ($pos + $matched < $end && $this->buffer[$pos + $matched] === $this->buffer[$candidate + $matched]) {
+          $matched++;
+        }
+        $pos+= $matched;
+
+        while ($matched >= 68) {
+          $out.= $this->copy($offset, 64);
+          $matched-= 64;
+        }
+        if ($matched > 64) {
+          $out.= $this->copy($offset, 60);
+          $matched-= 60;
+        }
+        $out.= $this->copy($offset, $matched);
+        $emit= $pos;
+
+        if ($pos >= $limit) goto emit;
+
+        $hash= ((unpack('V', $this->buffer, $pos - 1)[1] * Snappy::HASH_KEY) & 0xffffffff) >> $shift;
+        $hashtable[$hash]= ($pos - 1 - $start) & 0xffff;
+        $hash= ((unpack('V', $this->buffer, $pos)[1] * Snappy::HASH_KEY) & 0xffffffff) >> $shift;
+        $candidate= $start + $hashtable[$hash];
+        $hashtable[$hash]= ($pos - $start) & 0xffff;
+      } while ($equals32($pos, $candidate));
+
+      $pos++;
+      $next= ((unpack('V', $this->buffer, $pos)[1] * Snappy::HASH_KEY) & 0xffffffff) >> $shift;
+      goto next;
     }
-    $bits--;
-    $shift= 32 - $bits;
-    $hashtable= array_fill(0, 1 << $bits, 0);
 
-    $start= $pos;
-    $limit= $end - Snappy::INPUT_MARGIN;
-    $next= ((unpack('V', $this->buffer, ++$pos)[1] * Snappy::HASH_KEY) & 0xffffffff) >> $shift;
+    emit: if ($emit < $end) {
+      $out.= $this->literal($end - $emit).substr($this->buffer, $emit, $end - $emit);
+    }
 
-    // Emit literals
-    next: $forward= $pos;
-    $skip= 32;
-    do {
-      $pos= $forward;
-      $hash= $next;
-      $forward+= ($skip & 0xffffffff) >> 5;
-      $skip++;
-      if ($pos > $limit) return $emit;
-
-      $next= ((unpack('V', $this->buffer, $forward)[1] * Snappy::HASH_KEY) & 0xffffffff) >> $shift;
-      $candidate= $start + $hashtable[$hash];
-      $hashtable[$hash]= ($pos - $start) & 0xffff;
-    } while (!$this->equals32($pos, $candidate));
-
-    $this->out->write($this->literal($pos - $emit).substr($this->buffer, $emit, $pos - $emit));
-
-    // Emit copy instructions
-    do {
-      $offset= $pos - $candidate;
-      $matched= 4;
-      while ($pos + $matched < $end && $this->buffer[$pos + $matched] === $this->buffer[$candidate + $matched]) {
-        $matched++;
-      }
-      $pos+= $matched;
-
-      while ($matched >= 68) {
-        $this->out->write($this->copy($offset, 64));
-        $matched-= 64;
-      }
-      if ($matched > 64) {
-        $this->out->write($this->copy($offset, 60));
-        $matched-= 60;
-      }
-      $this->out->write($this->copy($offset, $matched));
-      $emit= $pos;
-
-      if ($pos >= $limit) return $emit;
-
-      $hash= ((unpack('V', $this->buffer, $pos - 1)[1] * Snappy::HASH_KEY) & 0xffffffff) >> $shift;
-      $hashtable[$hash]= ($pos - 1 - $start) & 0xffff;
-      $hash= ((unpack('V', $this->buffer, $pos)[1] * Snappy::HASH_KEY) & 0xffffffff) >> $shift;
-      $candidate= $start + $hashtable[$hash];
-      $hashtable[$hash]= ($pos - $start) & 0xffff;
-    } while ($this->equals32($pos, $candidate));
-
-    $pos++;
-    $next= ((unpack('V', $this->buffer, $pos)[1] * Snappy::HASH_KEY) & 0xffffffff) >> $shift;
-    goto next;
+    $this->buffer= substr($this->buffer, $end);
+    return $out;
   }
 
   /**
@@ -124,20 +141,21 @@ class SnappyOutputStream implements OutputStream {
    * @return void
    */
   public function write($arg) {
-    if (strlen($this->buffer) <= Snappy::BLOCK_SIZE) {
-      $this->buffer.= $arg;
-    } else {
-      $this->buffer= substr($this->buffer, $this->fragment());
+    $this->buffer.= $arg;
+    if (strlen($this->buffer) > Snappy::BLOCK_SIZE) {
+      $this->out->write($this->fragment());
     }
   }
 
   /**
-   * Flush this buffer (except if it's smaller than the input margin)
+   * Flush this buffer
    *
    * @return void
    */
   public function flush() {
-    $this->buffer= substr($this->buffer, $this->fragment());
+    if (strlen($this->buffer) > 0) {
+      $this->out->write($this->fragment());
+    }
   }
 
   /**
@@ -148,15 +166,10 @@ class SnappyOutputStream implements OutputStream {
    * @return void
    */
   public function close() {
-    $end= strlen($this->buffer);
-    if ($end > 0) {
-      $emit= $this->fragment();
-      if ($emit < $end) {
-        $this->out->write($this->literal($end - $emit).substr($this->buffer, $emit, $end - $emit));
-      }
+    if (strlen($this->buffer) > 0) {
+      $this->out->write($this->fragment());
       $this->buffer= '';
     }
-
     $this->out->close();
   }
 }
