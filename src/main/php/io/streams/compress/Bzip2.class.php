@@ -24,8 +24,8 @@ class Bzip2 extends Algorithm {
   }
 
   /** Compresses data */
-  public function compress(string $data, int $level= Compression::DEFAULT): string {
-    return bzcompress($data, $this->level($level));
+  public function compress(string $data, $options= null): string {
+    return bzcompress($data, $this->level(Options::from($options)->level));
   }
 
   /** Decompresses bytes */
@@ -43,7 +43,7 @@ class Bzip2 extends Algorithm {
   }
 
   /** Opens an output stream for writing */
-  public function create(OutputStream $out, int $level= Compression::DEFAULT): OutputStream {
-    return new Bzip2OutputStream($out, $this->level($level));
+  public function create(OutputStream $out, $options= null): OutputStream {
+    return new Bzip2OutputStream($out, $this->level(Options::from($options)->level));
   }
 }
