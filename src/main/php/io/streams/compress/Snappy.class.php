@@ -74,73 +74,74 @@ class Snappy extends Algorithm {
       $fragment= min($length - $pos, self::BLOCK_SIZE);
       $end= $pos + $fragment;
       $emit= $pos;
-      if ($fragment <= self::INPUT_MARGIN) continue;
 
-      $bits= 1;
-      while ((1 << $bits) <= $fragment && $bits <= self::HASH_BITS) {
-        $bits++;
+      if ($fragment >= self::INPUT_MARGIN) {
+        $bits= 1;
+        while ((1 << $bits) <= $fragment && $bits <= self::HASH_BITS) {
+          $bits++;
+        }
+        $bits--;
+        $shift= 32 - $bits;
+        $hashtable= array_fill(0, 1 << $bits, 0);
+
+        $start= $pos;
+        $limit= $end - self::INPUT_MARGIN;
+        $next= ((unpack('V', $data, ++$pos)[1] * self::HASH_KEY) & 0xffffffff) >> $shift;
+
+        // Emit literals
+        next: $forward= $pos;
+        $skip= 32;
+        do {
+          $pos= $forward;
+          $hash= $next;
+          $forward+= ($skip & 0xffffffff) >> 5;
+          $skip++;
+          if ($pos > $limit) goto emit;
+
+          $next= ((unpack('V', $data, $forward)[1] * self::HASH_KEY) & 0xffffffff) >> $shift;
+          $candidate= $start + $hashtable[$hash];
+          $hashtable[$hash]= ($pos - $start) & 0xffff;
+        } while (!$equals32($pos, $candidate));
+
+        $out.= $literal($pos - $emit).substr($data, $emit, $pos - $emit);
+
+        // Emit copy instructions
+        do {
+          $offset= $pos - $candidate;
+          $matched= 4;
+          while ($pos + $matched < $end && $data[$pos + $matched] === $data[$candidate + $matched]) {
+            $matched++;
+          }
+          $pos+= $matched;
+
+          while ($matched >= 68) {
+            $out.= $copy($offset, 64);
+            $matched-= 64;
+          }
+          if ($matched > 64) {
+            $out.= $copy($offset, 60);
+            $matched-= 60;
+          }
+          $out.= $copy($offset, $matched);
+          $emit= $pos;
+
+          if ($pos >= $limit) goto emit;
+
+          $hash= ((unpack('V', $data, $pos - 1)[1] * self::HASH_KEY) & 0xffffffff) >> $shift;
+          $hashtable[$hash]= ($pos - 1 - $start) & 0xffff;
+          $hash= ((unpack('V', $data, $pos)[1] * self::HASH_KEY) & 0xffffffff) >> $shift;
+          $candidate= $start + $hashtable[$hash];
+          $hashtable[$hash]= ($pos - $start) & 0xffff;
+        } while ($equals32($pos, $candidate));
+
+        $pos++;
+        $next= ((unpack('V', $data, $pos)[1] * self::HASH_KEY) & 0xffffffff) >> $shift;
+        goto next;
       }
-      $bits--;
-      $shift= 32 - $bits;
-      $hashtable= array_fill(0, 1 << $bits, 0);
 
-      $start= $pos;
-      $limit= $end - self::INPUT_MARGIN;
-      $next= ((unpack('V', $data, ++$pos)[1] * self::HASH_KEY) & 0xffffffff) >> $shift;
-
-      // Emit literals
-      next: $forward= $pos;
-      $skip= 32;
-      do {
-        $pos= $forward;
-        $hash= $next;
-        $forward+= ($skip & 0xffffffff) >> 5;
-        $skip++;
-        if ($pos > $limit) continue 2;
-
-        $next= ((unpack('V', $data, $forward)[1] * self::HASH_KEY) & 0xffffffff) >> $shift;
-        $candidate= $start + $hashtable[$hash];
-        $hashtable[$hash]= ($pos - $start) & 0xffff;
-      } while (!$equals32($pos, $candidate));
-
-      $out.= $literal($pos - $emit).substr($data, $emit, $pos - $emit);
-
-      // Emit copy instructions
-      do {
-        $offset= $pos - $candidate;
-        $matched= 4;
-        while ($pos + $matched < $end && $data[$pos + $matched] === $data[$candidate + $matched]) {
-          $matched++;
-        }
-        $pos+= $matched;
-
-        while ($matched >= 68) {
-          $out.= $copy($offset, 64);
-          $matched-= 64;
-        }
-        if ($matched > 64) {
-          $out.= $copy($offset, 60);
-          $matched-= 60;
-        }
-        $out.= $copy($offset, $matched);
-        $emit= $pos;
-
-        if ($pos >= $limit) continue 2;
-
-        $hash= ((unpack('V', $data, $pos - 1)[1] * self::HASH_KEY) & 0xffffffff) >> $shift;
-        $hashtable[$hash]= ($pos - 1 - $start) & 0xffff;
-        $hash= ((unpack('V', $data, $pos)[1] * self::HASH_KEY) & 0xffffffff) >> $shift;
-        $candidate= $start + $hashtable[$hash];
-        $hashtable[$hash]= ($pos - $start) & 0xffff;
-      } while ($equals32($pos, $candidate));
-
-      $pos++;
-      $next= ((unpack('V', $data, $pos)[1] * self::HASH_KEY) & 0xffffffff) >> $shift;
-      goto next;
-    }
-
-    if ($emit < $end) {
-      $out.= $literal($end - $emit).substr($data, $emit, $end - $emit);
+      emit: if ($emit < $end) {
+        $out.= $literal($end - $emit).substr($data, $emit, $end - $emit);
+      }
     }
 
     return $out;
