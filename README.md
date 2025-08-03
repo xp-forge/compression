@@ -8,7 +8,7 @@ Compression streams
 [![Supports PHP 8.0+](https://raw.githubusercontent.com/xp-framework/web/master/static/php-8_0plus.svg)](http://php.net/)
 [![Latest Stable Version](https://poser.pugx.org/xp-forge/compression/version.svg)](https://packagist.org/packages/xp-forge/compression)
 
-Compressing output and decompressing input streams including GZip, BZip2 and Brotli.
+Compressing output and decompressing input streams including GZip, BZip2 and Brotli and Snappy.
 
 Examples
 --------
@@ -39,8 +39,9 @@ $out->close();
 
 Dependencies
 ------------
-Compression algorithms are implemented in C and thus require a specific PHP extension:
+Compression algorithms might require a specific PHP extension:
 
+* **Snappy** - no dependencies, implemented in userland
 * **GZip** - requires PHP's ["zlib" extension](https://www.php.net/zlib)
 * **Bzip2** - requires PHP's ["bzip2" extension](https://www.php.net/bzip2)
 * **Brotli** - requires https://github.com/kjdev/php-ext-brotli
