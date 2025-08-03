@@ -62,14 +62,12 @@ class Snappy extends Algorithm {
     };
 
     // Compare 4-byte offsets in data at offsets a and b
-    $equals32= function($a, $b) use(&$data) {
-      return (
-        $data[$a] === $data[$b] &&
-        $data[$a + 1] === $data[$b + 1] &&
-        $data[$a + 2] === $data[$b + 2] &&
-        $data[$a + 3] === $data[$b + 3]
-      );
-    };
+    $equals32= fn($a, $b) => (
+      $data[$a] === $data[$b] &&
+      $data[$a + 1] === $data[$b + 1] &&
+      $data[$a + 2] === $data[$b + 2] &&
+      $data[$a + 3] === $data[$b + 3]
+    );
 
     $out= self::length(strlen($data));
     for ($emit= $pos= 0, $end= $length= strlen($data); $pos < $length; $pos= $end) {

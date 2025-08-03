@@ -14,7 +14,7 @@ class BufferedOutputStreamTest {
 
   #[Test]
   public function can_create_with_function() {
-    new BufferedOutputStream(new MemoryOutputStream(), function($data) { return $data; });
+    new BufferedOutputStream(new MemoryOutputStream(), fn($data) => $data);
   }
 
   #[Test, Expect(IllegalArgumentException::class)]
@@ -26,7 +26,7 @@ class BufferedOutputStreamTest {
   public function writes_on_close() {
     $out= new MemoryOutputStream();
 
-    $compress= new BufferedOutputStream($out, function($data) { return 'Z:'.strlen($data); });
+    $compress= new BufferedOutputStream($out, fn($data) => 'Z:'.strlen($data));
     $compress->write('Test');
     $compress->write('ed');
     $compress->close();
