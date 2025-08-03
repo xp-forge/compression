@@ -167,9 +167,11 @@ class Snappy extends Algorithm {
           if (60 === $l) {
             if ($pos + 1 >= $limit) throw new IOException('Not enough input, expected 1');
             $l= unpack('C', $bytes, $pos)[1];
+            $pos++;
           } else if (61 === $l) {
             if ($pos + 2 >= $limit) throw new IOException('Not enough input, expected 2');
             $l= unpack('v', $bytes, $pos)[1];
+            $pos+= 2;
           }
 
           $l++;

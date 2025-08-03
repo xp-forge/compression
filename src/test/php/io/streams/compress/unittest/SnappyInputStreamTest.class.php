@@ -24,6 +24,16 @@ class SnappyInputStreamTest {
   }
 
   #[Test]
+  public function consecutive_literals() {
+    $ones= str_repeat('1', 255);
+    $twos= str_repeat('2', 255);
+    Assert::equals(
+      $ones.$twos,
+      Streams::readAll($this->fixture("\376\003\360\376{$ones}\360\376{$twos}"))
+    );
+  }
+
+  #[Test]
   public function copy() {
     Assert::equals(
       "Hello\n=================",
