@@ -54,14 +54,6 @@ class SnappyOutputStream implements OutputStream {
     $pos= $emit= 0;
     $out= '';
 
-    // Compare 4-byte offsets in data at offsets a and b
-    $equals32= fn($a, $b) => (
-      $this->buffer[$a] === $this->buffer[$b] &&
-      $this->buffer[$a + 1] === $this->buffer[$b + 1] &&
-      $this->buffer[$a + 2] === $this->buffer[$b + 2] &&
-      $this->buffer[$a + 3] === $this->buffer[$b + 3]
-    );
-
     if ($end >= Snappy::INPUT_MARGIN) {
       $bits= 1;
       while ((1 << $bits) <= $end && $bits <= Snappy::HASH_BITS) {
@@ -88,7 +80,7 @@ class SnappyOutputStream implements OutputStream {
         $next= ((unpack('V', $this->buffer, $forward)[1] * Snappy::HASH_KEY) & 0xffffffff) >> $shift;
         $candidate= $start + $hashtable[$hash];
         $hashtable[$hash]= ($pos - $start) & 0xffff;
-      } while (!$equals32($pos, $candidate));
+      } while (!$this->equals32($pos, $candidate));
 
       $out.= $this->literal($pos - $emit).substr($this->buffer, $emit, $pos - $emit);
 
@@ -119,7 +111,7 @@ class SnappyOutputStream implements OutputStream {
         $hash= ((unpack('V', $this->buffer, $pos)[1] * Snappy::HASH_KEY) & 0xffffffff) >> $shift;
         $candidate= $start + $hashtable[$hash];
         $hashtable[$hash]= ($pos - $start) & 0xffff;
-      } while ($equals32($pos, $candidate));
+      } while ($this->equals32($pos, $candidate));
 
       $pos++;
       $next= ((unpack('V', $this->buffer, $pos)[1] * Snappy::HASH_KEY) & 0xffffffff) >> $shift;
