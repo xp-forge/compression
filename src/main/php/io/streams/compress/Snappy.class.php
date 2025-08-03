@@ -229,19 +229,10 @@ class Snappy extends Algorithm {
 
   /** Opens an output stream for writing */
   public function create(OutputStream $out, $options= null): OutputStream {
-
-    // FIXME Solve this without buffering
-    $self= $this;
-    return newinstance(OutputStream::class, [], [
-      'bytes' => '',
-      'write' => function($bytes) { $this->bytes.= $bytes; },
-      'flush' => function() { },
-      'close' => function() use($self, $out) {
-        if (null !== $this->bytes) {
-          $out->write($self->compress($this->bytes));
-          $this->bytes= null;
-        }
-      }
-    ]);
+    if (null !== ($length= Options::from($options)->length)) {
+      return new SnappyOutputStream($out, $length);
+    } else {
+      return new BufferedOutputStream($out, [$this, 'compress']);
+    }
   }
 }
