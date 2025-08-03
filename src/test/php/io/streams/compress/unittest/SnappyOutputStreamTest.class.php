@@ -44,4 +44,17 @@ class SnappyOutputStreamTest {
 
     Assert::equals(new Bytes("\027\030Hello\n=\076\001\000"), new Bytes($out->bytes()));
   }
+
+  #[Test]
+  public function repeated_input_compressed() {
+    $out= new MemoryOutputStream();
+    $compress= $this->fixture($out, 20);
+    $compress->write('Hello');
+    $compress->write('Hello');
+    $compress->write('Hello');
+    $compress->write('Hello');
+    $compress->close();
+
+    Assert::equals(new Bytes("\024\020Hello:\005\000"), new Bytes($out->bytes()));
+  }
 }
