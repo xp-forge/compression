@@ -10,7 +10,7 @@ use io\streams\InputStream;
  */
 class SnappyInputStream implements InputStream {
   private $in, $out;
-  private $read= 0;
+  private $limit= 0;
   private $buffer= '';
 
   /**
@@ -44,7 +44,7 @@ class SnappyInputStream implements InputStream {
     $this->out= '';
     for ($shift= 0, $c= 255; $shift < 32, $c >= 128; $shift+= 7) {
       $c= ord($this->bytes(1));
-      $this->read|= ($c & 0x7f) << $shift;
+      $this->limit|= ($c & 0x7f) << $shift;
     }
   }
 
@@ -56,7 +56,7 @@ class SnappyInputStream implements InputStream {
    */
   public function read($limit= 8192) {
     $pos= $start= strlen($this->out);
-    $limit= min($limit + $start, $this->read);
+    $limit= min($limit + $start, $this->limit);
 
     while ($pos < $limit) {
       $c= ord($this->bytes(1));
@@ -100,15 +100,16 @@ class SnappyInputStream implements InputStream {
       $pos+= $l;
     }
 
-    // Once block size is reached, offets never reference anything before.
-    if (strlen($this->out) > Snappy::BLOCK_SIZE) {
-      $chunk= substr($this->out, $start);
+    $chunk= substr($this->out, $start);
+
+    // Once block size is reached, offets never reference anything before,
+    // free memory by removing one block from the front of the output.
+    while (strlen($this->out) > Snappy::BLOCK_SIZE) {
       $this->out= substr($this->out, Snappy::BLOCK_SIZE);
-      $this->read-= Snappy::BLOCK_SIZE;
-      return $chunk;
+      $this->limit-= Snappy::BLOCK_SIZE;
     }
 
-    return substr($this->out, $start);
+    return $chunk;
   }
 
   /**
@@ -118,7 +119,7 @@ class SnappyInputStream implements InputStream {
    * @return int
    */
   public function available() {
-    return $this->read - strlen($this->out);
+    return $this->limit - strlen($this->out);
   }
 
   /**
