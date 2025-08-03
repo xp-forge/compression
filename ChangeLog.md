@@ -3,6 +3,16 @@ Compression streams ChangeLog
 
 ## ?.?.? / ????-??-??
 
+## 2.0.0 / ????-??-??
+
+* **Heads up:** Algorithm implementations must change their `compress`
+  and `create` signatures from `$level= -1` to `$options= null`, and
+  can use `Options::from($options)->level` to access the given level
+  in a backwards-compatible fashion.
+  (@thekid)
+* Merged PR #12: Abstract algorithm options into an `Options` class
+  (@thekid)
+
 ## 1.4.0 / 2025-07-31
 
 * Merged PR #9: Add `Algorithm::compress()` and `Algorithm::decompress()`
