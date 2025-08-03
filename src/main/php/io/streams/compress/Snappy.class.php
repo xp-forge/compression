@@ -9,7 +9,6 @@ class Snappy extends Algorithm {
   const HASH_KEY     = 0x1e35a7bd;
   const HASH_BITS    = 14;
   const INPUT_MARGIN = 15;
-  const WORD_MASK    = [0, 0xff, 0xffff, 0xffffff, 0xffffffff];
 
   /** Returns whether this algorithm is supported in the current setup */
   public function supported(): bool { return true; }
@@ -162,15 +161,15 @@ class Snappy extends Algorithm {
       $c= ord($bytes[$pos++]);
       switch ($c & 0x03) {
         case 0:
-          $l= 1 + ($c >> 2);
-          if ($l > 60) {
-            if ($pos + 3 >= $limit) throw new IOException('Position out of range');
-
-            $s= $l - 60;
-            $l= unpack('V', $bytes, $pos)[1];
-            $l= ($l & self::WORD_MASK[$s]) + 1;
-            $pos+= $s;
+          $l= $c >> 2;
+          if (60 === $l) {
+            if ($pos + 1 >= $limit) throw new IOException('Position out of range');
+            $l= unpack('C', $bytes, $pos)[1];
+          } else if (61 === $l) {
+            if ($pos + 2 >= $limit) throw new IOException('Position out of range');
+            $l= unpack('v', $bytes, $pos)[1];
           }
+          $l++;
           if ($pos + $l > $limit) throw new IOException('Not enough input for literal, expecting '.$l);
 
           $out.= substr($bytes, $pos, $l);
