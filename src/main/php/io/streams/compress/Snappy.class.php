@@ -70,7 +70,7 @@ class Snappy extends Algorithm {
     );
 
     $out= self::length(strlen($data));
-    for ($emit= $pos= 0, $end= $length= strlen($data); $pos < $length; $pos= $end) {
+    for ($pos= 0, $end= $length= strlen($data); $pos < $length; $pos= $end) {
       $fragment= min($length - $pos, self::BLOCK_SIZE);
       $end= $pos + $fragment;
       $emit= $pos;
