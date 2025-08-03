@@ -53,8 +53,9 @@ class SnappyOutputStreamTest {
     $compress->write('Hello');
     $compress->write('Hello');
     $compress->write('Hello');
+    $compress->write('!');
     $compress->close();
 
-    Assert::equals(new Bytes("\024\020Hello:\005\000"), new Bytes($out->bytes()));
+    Assert::equals(new Bytes("\024\020Hello:\005\000\000!"), new Bytes($out->bytes()));
   }
 }
