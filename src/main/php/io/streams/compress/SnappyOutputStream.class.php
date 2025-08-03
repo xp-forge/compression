@@ -63,7 +63,6 @@ class SnappyOutputStream implements OutputStream {
       $shift= 32 - $bits;
       $hashtable= array_fill(0, 1 << $bits, 0);
 
-      $start= $pos;
       $limit= $end - Snappy::INPUT_MARGIN;
       $next= ((unpack('V', $this->buffer, ++$pos)[1] * Snappy::HASH_KEY) & 0xffffffff) >> $shift;
 
@@ -78,8 +77,8 @@ class SnappyOutputStream implements OutputStream {
         if ($pos > $limit || $forward > $limit) goto emit;
 
         $next= ((unpack('V', $this->buffer, $forward)[1] * Snappy::HASH_KEY) & 0xffffffff) >> $shift;
-        $candidate= $start + $hashtable[$hash];
-        $hashtable[$hash]= ($pos - $start) & 0xffff;
+        $candidate= $hashtable[$hash];
+        $hashtable[$hash]= $pos & 0xffff;
       } while (!$this->equals32($pos, $candidate));
 
       $out.= $this->literal($pos - $emit).substr($this->buffer, $emit, $pos - $emit);
@@ -107,10 +106,10 @@ class SnappyOutputStream implements OutputStream {
         if ($pos >= $limit) goto emit;
 
         $hash= ((unpack('V', $this->buffer, $pos - 1)[1] * Snappy::HASH_KEY) & 0xffffffff) >> $shift;
-        $hashtable[$hash]= ($pos - 1 - $start) & 0xffff;
+        $hashtable[$hash]= ($pos - 1) & 0xffff;
         $hash= ((unpack('V', $this->buffer, $pos)[1] * Snappy::HASH_KEY) & 0xffffffff) >> $shift;
-        $candidate= $start + $hashtable[$hash];
-        $hashtable[$hash]= ($pos - $start) & 0xffff;
+        $candidate= $hashtable[$hash];
+        $hashtable[$hash]= $pos & 0xffff;
       } while ($this->equals32($pos, $candidate));
 
       $pos++;
