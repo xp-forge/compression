@@ -61,6 +61,8 @@ class Snappy extends Algorithm {
 
   /** Compresses data */
   public function compress(string $data, $options= null): string {
+    $length= strlen($data);
+    $out= self::length($length);
 
     // Inlined comparison of 4-byte offsets in data at offsets a and b
     $equals32= fn($a, $b) => (
@@ -70,8 +72,7 @@ class Snappy extends Algorithm {
       $data[$a + 3] === $data[$b + 3]
     );
 
-    $out= self::length(strlen($data));
-    for ($pos= 0, $end= $length= strlen($data); $pos < $length; $pos= $end) {
+    for ($pos= 0; $pos < $length; $pos= $end) {
       $fragment= min($length - $pos, self::BLOCK_SIZE);
       $end= $pos + $fragment;
       $emit= $pos;
