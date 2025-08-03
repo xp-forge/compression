@@ -3,11 +3,7 @@
 use io\IOException;
 use io\streams\InputStream;
 
-/**
- * Snappy input stream
- *
- * @test  io.streams.compress.unittest.SnappyInputStreamTest
- */
+/** @test io.streams.compress.unittest.SnappyInputStreamTest */
 class SnappyInputStream implements InputStream {
   private $in, $out;
   private $limit= 0;

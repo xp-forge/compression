@@ -27,7 +27,7 @@ class SnappyInputStreamTest {
   public function copy() {
     Assert::equals(
       "Hello\n=================",
-      Streams::readAll($this->fixture("\026\030Hello\n=\076\001\000"))
+      Streams::readAll($this->fixture("\027\030Hello\n=\076\001\000"))
     );
   }
 
