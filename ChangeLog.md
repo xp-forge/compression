@@ -5,6 +5,8 @@ Compression streams ChangeLog
 
 ## 2.0.0 / ????-??-??
 
+* **Heads up:** Dropped support for PHP < 7.4, see xp-framework/rfc#343
+  (@thekid)
 * **Heads up:** Algorithm implementations must change their `compress`
   and `create` signatures from `$level= -1` to `$options= null`, and
   can use `Options::from($options)->level` to access the given level
