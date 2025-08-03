@@ -57,5 +57,11 @@ class BufferedOutputStream implements OutputStream {
       $this->out->write(($this->compress)($this->buffer));
       $this->buffer= null;
     }
+    $this->out->close();
+  }
+
+  /** Ensures output stream is closed */
+  public function __destruct() {
+    $this->close();
   }
 }

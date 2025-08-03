@@ -1,7 +1,7 @@
 <?php namespace io\streams\compress\unittest;
 
-use io\streams\MemoryOutputStream;
 use io\streams\compress\{BufferedOutputStream, None};
+use io\streams\{OutputStream, MemoryOutputStream};
 use lang\IllegalArgumentException;
 use test\{Assert, Expect, Test};
 
@@ -32,5 +32,21 @@ class BufferedOutputStreamTest {
     $compress->close();
 
     Assert::equals('Z:6', $out->bytes());
+  }
+
+  #[Test]
+  public function closes_underlying_stream() {
+    $out= new class() implements OutputStream {
+      public $closed= false;
+      public function write($bytes) { }
+      public function flush() { }
+      public function close() { $this->closed= true; }
+    };
+
+    $compress= new BufferedOutputStream($out, new None());
+    $closed= $out->closed;
+    $compress->close();
+
+    Assert::equals([false, true], [$closed, $out->closed]);
   }
 }
