@@ -3,7 +3,7 @@
 use io\IOException;
 use io\streams\compress\SnappyInputStream;
 use io\streams\{Streams, MemoryInputStream};
-use test\{Assert, Expect, Test};
+use test\{Assert, Expect, Test, Values};
 
 class SnappyInputStreamTest {
 
@@ -17,9 +17,10 @@ class SnappyInputStreamTest {
     $this->fixture("\x00");
   }
 
-  #[Test]
-  public function literal() {
-    Assert::equals('Hello', Streams::readAll($this->fixture("\005\020Hello")));
+  #[Test, Values([[5, "\005\020"], [255, "\377\001\360\376"], [256, "\200\002\364\377\000"]])]
+  public function literals($length, $encoded) {
+    $payload= str_repeat('*', $length);
+    Assert::equals($payload, Streams::readAll($this->fixture($encoded.$payload)));
   }
 
   #[Test]
@@ -30,12 +31,12 @@ class SnappyInputStreamTest {
     );
   }
 
-  #[Test, Expect(IOException::class)]
+  #[Test, Expect(class: IOException::class, message: 'Not enough input, expected 1')]
   public function from_empty() {
     Streams::readAll($this->fixture(''));
   }
 
-  #[Test, Expect(IOException::class)]
+  #[Test, Expect(class: IOException::class, message: 'Not enough input, expected 1')]
   public function not_enough_input() {
     Streams::readAll($this->fixture("\x01"));
   }

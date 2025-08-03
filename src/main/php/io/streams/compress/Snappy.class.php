@@ -148,9 +148,10 @@ class Snappy extends Algorithm {
   /** Decompresses bytes */
   public function decompress(string $bytes): string {
     $out= '';
+    $pos= 0;
 
     // Read uncompressed length from varint
-    for ($length= $pos= $shift= 0, $c= 255; $shift < 32, $c >= 128; $pos++, $shift+= 7) {
+    for ($length= $shift= 0, $c= 255; $shift < 32, $c >= 128; $pos++, $shift+= 7) {
       $c= ord($bytes[$pos]);
       $length|= ($c & 0x7f) << $shift;
     }
@@ -163,14 +164,15 @@ class Snappy extends Algorithm {
         case 0:
           $l= $c >> 2;
           if (60 === $l) {
-            if ($pos + 1 >= $limit) throw new IOException('Position out of range');
+            if ($pos + 1 >= $limit) throw new IOException('Not enough input, expected 1');
             $l= unpack('C', $bytes, $pos)[1];
           } else if (61 === $l) {
-            if ($pos + 2 >= $limit) throw new IOException('Position out of range');
+            if ($pos + 2 >= $limit) throw new IOException('Not enough input, expected 2');
             $l= unpack('v', $bytes, $pos)[1];
           }
+
           $l++;
-          if ($pos + $l > $limit) throw new IOException('Not enough input for literal, expecting '.$l);
+          if ($pos + $l > $limit) throw new IOException('Not enough input, expected '.$l);
 
           $out.= substr($bytes, $pos, $l);
           $pos+= $l;
@@ -186,7 +188,7 @@ class Snappy extends Algorithm {
           break;
 
         case 2:
-          if ($pos + 1 >= $limit) throw new IOException('Position out of range');
+          if ($pos + 1 >= $limit) throw new IOException('Not enough input, expected 1');
 
           $l= 1 + ($c >> 2);
           $offset= unpack('v', $bytes, $pos)[1];
@@ -197,7 +199,7 @@ class Snappy extends Algorithm {
           break;
 
         case 3:
-          if ($pos + 3 >= $limit) throw new IOException('Position out of range');
+          if ($pos + 3 >= $limit) throw new IOException('Not enough input, expected 3');
 
           $l= 1 + ($c >> 2);
           $offset= unpack('V', $bytes, $pos)[1];
