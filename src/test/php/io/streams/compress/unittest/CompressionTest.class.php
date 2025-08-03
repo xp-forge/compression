@@ -106,7 +106,7 @@ class CompressionTest {
 
   #[Test, Values(from: 'algorithms')]
   public function compress_roundtrip($compressed) {
-    $bytes= $compressed->compress('Test', Compression::DEFAULT);
+    $bytes= $compressed->compress('Test');
     $result= $compressed->decompress($bytes);
 
     Assert::equals('Test', $result);
@@ -116,7 +116,7 @@ class CompressionTest {
   public function streams_roundtrip($compressed) {
     $target= new MemoryOutputStream();
 
-    $out= $compressed->create($target, Compression::DEFAULT);
+    $out= $compressed->create($target);
     $out->write('Test');
     $out->close();
 
