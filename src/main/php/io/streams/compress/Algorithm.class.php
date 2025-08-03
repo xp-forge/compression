@@ -21,7 +21,7 @@ abstract class Algorithm implements Value {
   public abstract function level(int $select): int;
 
   /** Compresses data */
-  public abstract function compress(string $data, int $level= Compression::DEFAULT): string;
+  public abstract function compress(string $data, $options= null): string;
 
   /** Decompresses bytes */
   public abstract function decompress(string $bytes): string;
@@ -30,7 +30,7 @@ abstract class Algorithm implements Value {
   public abstract function open(InputStream $in): InputStream;
 
   /** Opens an output stream for writing */
-  public abstract function create(OutputStream $out, int $level= Compression::DEFAULT): OutputStream;
+  public abstract function create(OutputStream $out, $options= null): OutputStream;
 
   /** @return string */
   public function hashCode() { return crc32($this->name()); }

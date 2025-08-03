@@ -20,7 +20,7 @@ class None extends Algorithm {
   public function level(int $select): int { return 0; }
 
   /** Compresses data */
-  public function compress(string $data, int $level= Compression::DEFAULT): string { return $data; }
+  public function compress(string $data, $options= null): string { return $data; }
 
   /** Decompresses bytes */
   public function decompress(string $bytes): string { return $bytes; }
@@ -31,7 +31,7 @@ class None extends Algorithm {
   }
 
   /** Opens an output stream for writing */
-  public function create(OutputStream $out, int $level= Compression::DEFAULT): OutputStream {
+  public function create(OutputStream $out, $options= null): OutputStream {
     return $out;
   }
 }
