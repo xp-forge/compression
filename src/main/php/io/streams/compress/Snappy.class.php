@@ -96,7 +96,7 @@ class Snappy extends Algorithm {
           $hash= $next;
           $forward+= ($skip & 0xffffffff) >> 5;
           $skip++;
-          if ($pos > $limit) goto emit;
+          if ($pos > $limit || $forward > $limit) goto emit;
 
           $next= ((unpack('V', $data, $forward)[1] * self::HASH_KEY) & 0xffffffff) >> $shift;
           $candidate= $start + $hashtable[$hash];
