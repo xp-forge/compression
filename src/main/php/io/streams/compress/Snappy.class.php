@@ -54,8 +54,10 @@ class Snappy extends Algorithm {
   public static function copy(int $i, int $l): string {
     if ($l < 12 && $i < 2048) {
       return pack('CC', 1 + (($l - 4) << 2) + ((($i & 0xffffffff) >> 8) << 5), $i & 0xff);
-    } else {
+    } else if ($i < 65536) {
       return pack('CCC', 2 + (($l - 1) << 2), $i & 0xff, ($i & 0xffffffff) >> 8);
+    } else {
+      return pack('CV', 3 + (($l - 1) << 2), $i & 0xffffffff);
     }
   }
 
