@@ -59,10 +59,8 @@ class SnappyInputStream implements InputStream {
       switch ($c & 0x03) {
         case 0:
           $l= $c >> 2;
-          if (60 === $l) {
-            $l= unpack('C', $this->bytes(1))[1];
-          } else if (61 === $l) {
-            $l= unpack('v', $this->bytes(2))[1];
+          if ($l >= 60) {
+            $l= unpack('P', str_pad($this->bytes($l - 59), 8, "\0"))[1];
           }
           $this->out.= $this->bytes(++$l);
           break;
