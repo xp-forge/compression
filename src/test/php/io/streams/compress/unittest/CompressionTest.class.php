@@ -15,14 +15,17 @@ class CompressionTest {
     yield ['gzip', 'gzip'];
     yield ['bzip2', 'bzip2'];
     yield ['brotli', 'brotli'];
+    yield ['zstandard', 'zstandard'];
 
     // File extensions
     yield ['.gz', 'gzip'];
     yield ['.bz2', 'bzip2'];
     yield ['.br', 'brotli'];
+    yield ['.zstd', 'zstandard'];
 
     // HTTP Content-Encoding aliases
     yield ['br', 'brotli'];    
+    yield ['zstd', 'zstandard'];
   }
 
   /** @return iterable */
@@ -42,16 +45,24 @@ class CompressionTest {
       yield [$gzip, "\037\213\b\000\000\000\000\000\000\n<Plain data>"];
     }
 
-    // PHP 7.4RC1 is the first version to handle reading errors correctly, see
-    // https://github.com/php/php-src/commit/d59aac58b3e7da7ad01a194fe9840d89725ea229
     $bzip2= $algorithms->named('bzip2');
-    if ($bzip2->supported() && PHP_VERSION_ID >= 70400) {
+    if ($bzip2->supported()) {
       yield [$bzip2, "BZh61AY&SY\331<Plain data>"];
     }
 
     $snappy= $algorithms->named('snappy');
     if ($snappy->supported()) {
       yield [$snappy, "\002"];
+    }
+
+    $brotli= $algorithms->named('brotli');
+    if ($brotli->supported()) {
+      yield [$brotli, "<Plain data>"];
+    }
+
+    $zstandard= $algorithms->named('zstandard');
+    if ($zstandard->supported()) {
+      yield [$zstandard, "<Plain data>"];
     }
   }
 
@@ -61,7 +72,7 @@ class CompressionTest {
     foreach (Compression::algorithms() as $name => $algorithm) {
       $names[]= $name;
     }
-    Assert::equals(['gzip', 'bzip2', 'brotli', 'snappy'], $names);
+    Assert::equals(['gzip', 'bzip2', 'brotli', 'snappy', 'zstandard'], $names);
   }
 
   #[Test]
@@ -84,17 +95,17 @@ class CompressionTest {
     Assert::equals($expected, Compression::algorithms()->named($name)->name());
   }
 
-  #[Test, Values([['gzip', 'zlib'], ['bzip2', 'bz2'], ['brotli', 'brotli']])]
+  #[Test, Values([['gzip', 'zlib'], ['bzip2', 'bz2'], ['brotli', 'brotli'], ['zstandard', 'zstd']])]
   public function supported($compression, $extension) {
     Assert::equals(extension_loaded($extension), Compression::algorithms()->named($compression)->supported());
   }
 
-  #[Test, Values([['gzip', 'gzip'], ['bzip2', 'bzip2'], ['brotli', 'br']])]
+  #[Test, Values([['gzip', 'gzip'], ['bzip2', 'bzip2'], ['brotli', 'br'], ['zstandard', 'zstd']])]
   public function token($compression, $expected) {
     Assert::equals($expected, Compression::algorithms()->named($compression)->token());
   }
 
-  #[Test, Values([['gzip', '.gz'], ['bzip2', '.bz2'], ['brotli', '.br']])]
+  #[Test, Values([['gzip', '.gz'], ['bzip2', '.bz2'], ['brotli', '.br'], ['zstandard', '.zstd']])]
   public function extension($compression, $expected) {
     Assert::equals($expected, Compression::algorithms()->named($compression)->extension());
   }

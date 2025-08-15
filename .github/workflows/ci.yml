@@ -46,13 +46,34 @@ jobs:
         sudo cp brotli.ini /etc/php/${{ matrix.php-versions }}/mods-available/ &&
         sudo phpenmod -v ${{ matrix.php-versions }} brotli
 
+    - name: Add ZStandard extension (Ubuntu)
+      if: runner.os != 'Windows' && matrix.php-versions == '8.4'
+      run: >
+        git clone --recursive --depth=1 https://github.com/kjdev/php-ext-zstd.git &&
+        cd php-ext-zstd &&
+        phpize &&
+        ./configure --enable-zstd &&
+        make -j $(nproc) &&
+        echo "extension=zstd.so" > zstd.ini &&
+        sudo make install &&
+        sudo cp zstd.ini /etc/php/${{ matrix.php-versions }}/mods-available/ &&
+        sudo phpenmod -v ${{ matrix.php-versions }} zstd
+
     - name: Add Brotli extension (Windows)
       if: runner.os == 'Windows' && matrix.php-versions == '8.4'
       run: >
         curl -sSL -o brotli.zip https://github.com/kjdev/php-ext-brotli/releases/download/0.18.0/php_brotli-0.18.0-8.4-nts-vs17-x86_64.zip &&
         unzip brotli.zip &&
-        cp *.dll C:/tools/php/ext/php_brotli.dll &&
+        cp php_brotli*.dll C:/tools/php/ext/php_brotli.dll &&
         echo "extension=brotli" >> C:/tools/php/php.ini
+
+    - name: Add ZStandard extension (Windows)
+      if: runner.os == 'Windows' && matrix.php-versions == '8.4'
+      run: >
+        curl -sSL -o zstd.zip https://github.com/kjdev/php-ext-zstd/releases/download/0.15.0/php_zstd-0.15.0-8.4-nts-vs17-x86_64.zip &&
+        unzip zstd.zip &&
+        cp php_zstd*.dll C:/tools/php/ext/php_zstd.dll &&
+        echo "extension=zstd" >> C:/tools/php/php.ini
 
     - name: Validate composer.json and composer.lock
       run: composer validate
