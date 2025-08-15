@@ -140,3 +140,4 @@ $in->close();
 See also
 --------
 * The PHP RFC [Modern Compression](https://wiki.php.net/rfc/modern_compression) suggests adding *zstd* and *brotli* into PHP.
+* Snappy *does not aim for maximum compression, or compatibility with any other compression library; instead, it aims for very high speeds and reasonable compression*, quoting [its Wikipedia page](https://en.wikipedia.org/wiki/Snappy_(compression))
