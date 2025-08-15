@@ -5,6 +5,8 @@ Compression streams ChangeLog
 
 ## 2.0.0 / ????-??-??
 
+* Merged PR #8: Add ZStandard compression, based on the `zstd` extension
+  from https://github.com/kjdev/php-ext-zstd/ - see issue #7.
 * **Heads up:** Dropped support for PHP < 7.4, see xp-framework/rfc#343
   (@thekid)
 * **Heads up:** Algorithm implementations must change their `compress`
