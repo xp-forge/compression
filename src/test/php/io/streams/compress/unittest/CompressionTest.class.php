@@ -50,6 +50,11 @@ class CompressionTest {
       yield [$bzip2, "BZh61AY&SY\331<Plain data>"];
     }
 
+    $snappy= $algorithms->named('snappy');
+    if ($snappy->supported()) {
+      yield [$snappy, "\002"];
+    }
+
     $brotli= $algorithms->named('brotli');
     if ($brotli->supported()) {
       yield [$brotli, "<Plain data>"];
@@ -67,7 +72,7 @@ class CompressionTest {
     foreach (Compression::algorithms() as $name => $algorithm) {
       $names[]= $name;
     }
-    Assert::equals(['gzip', 'bzip2', 'brotli', 'zstandard'], $names);
+    Assert::equals(['gzip', 'bzip2', 'brotli', 'snappy', 'zstandard'], $names);
   }
 
   #[Test]
@@ -112,7 +117,7 @@ class CompressionTest {
 
   #[Test, Values(from: 'algorithms')]
   public function compress_roundtrip($compressed) {
-    $bytes= $compressed->compress('Test', Compression::DEFAULT);
+    $bytes= $compressed->compress('Test');
     $result= $compressed->decompress($bytes);
 
     Assert::equals('Test', $result);
@@ -122,7 +127,7 @@ class CompressionTest {
   public function streams_roundtrip($compressed) {
     $target= new MemoryOutputStream();
 
-    $out= $compressed->create($target, Compression::DEFAULT);
+    $out= $compressed->create($target);
     $out->write('Test');
     $out->close();
 

@@ -1,6 +1,6 @@
 <?php namespace io\streams;
 
-use io\streams\compress\{Algorithm, Algorithms, None, Brotli, Bzip2, Gzip, ZStandard};
+use io\streams\compress\{Algorithm, Algorithms, None, Brotli, Bzip2, Gzip, Snappy, ZStandard};
 use lang\MethodNotImplementedException;
 
 /**
@@ -22,7 +22,13 @@ abstract class Compression {
     self::$NONE= new None();
 
     // Register known algorithms included in this library
-    self::$algorithms= (new Algorithms())->add(new Gzip(), new Bzip2(), new Brotli(), new ZStandard());
+    self::$algorithms= (new Algorithms())->add(
+      new Gzip(),
+      new Bzip2(),
+      new Brotli(),
+      new Snappy(),
+      new ZStandard()
+    );
   }
 
   /**

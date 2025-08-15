@@ -8,7 +8,7 @@ Compression streams
 [![Supports PHP 8.0+](https://raw.githubusercontent.com/xp-framework/web/master/static/php-8_0plus.svg)](http://php.net/)
 [![Latest Stable Version](https://poser.pugx.org/xp-forge/compression/version.svg)](https://packagist.org/packages/xp-forge/compression)
 
-Compressing output and decompressing input streams including GZip, BZip2, ZStandard and Brotli.
+Compressing output and decompressing input streams including GZip, BZip2, Brotli, Snappy and ZStandard.
 
 Examples
 --------
@@ -39,11 +39,12 @@ $out->close();
 
 Dependencies
 ------------
-Compression algorithms are implemented in C and thus require a specific PHP extension:
+Compression algorithms might require a specific PHP extension:
 
 * **GZip** - requires PHP's ["zlib" extension](https://www.php.net/zlib)
 * **Bzip2** - requires PHP's ["bzip2" extension](https://www.php.net/bzip2)
 * **Brotli** - requires https://github.com/kjdev/php-ext-brotli
+* **Snappy** - *no dependencies, implemented in userland*
 * **ZStandard** - requires https://github.com/kjdev/php-ext-zstd
 
 Accessing these algorithms can be done via the `Compression` API:
@@ -97,6 +98,7 @@ io.streams.compress.Algorithms@{
   io.streams.compress.Gzip(token: gzip, extension: .gz, supported: true, levels: 1..9)
   io.streams.compress.Bzip2(token: bzip2, extension: .bz2, supported: false, levels: 1..9)
   io.streams.compress.Brotli(token: br, extension: .br, supported: true, levels: 1..11)
+  io.streams.compress.Snappy(token: snappy, extension: .sn, supported: true, levels: 0..0)
   io.streams.compress.ZStandard(token: zstd, extension: .zstd, supported: true, levels: 1..22)
 }
 ```
@@ -138,3 +140,4 @@ $in->close();
 See also
 --------
 * The PHP RFC [Modern Compression](https://wiki.php.net/rfc/modern_compression) suggests adding *zstd* and *brotli* into PHP.
+* Snappy *does not aim for maximum compression, or compatibility with any other compression library; instead, it aims for very high speeds and reasonable compression*, quoting [its Wikipedia page](https://en.wikipedia.org/wiki/Snappy_(compression))
