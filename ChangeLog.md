@@ -3,7 +3,7 @@ Compression streams ChangeLog
 
 ## ?.?.? / ????-??-??
 
-## 2.0.0 / ????-??-??
+## 2.0.0 / 2025-08-15
 
 * Merged PR #11: Implement snappy compression in userland code. Snappy
   does not aim for maximum compression, favoring high speeds.
