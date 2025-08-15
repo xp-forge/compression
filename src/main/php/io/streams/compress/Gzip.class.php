@@ -24,8 +24,8 @@ class Gzip extends Algorithm {
   }
 
   /** Compresses data */
-  public function compress(string $data, int $level= Compression::DEFAULT): string {
-    return gzcompress($data, $this->level($level));
+  public function compress(string $data, $options= null): string {
+    return gzcompress($data, $this->level(Options::from($options)->level));
   }
 
   /** Decompresses bytes */
@@ -44,7 +44,7 @@ class Gzip extends Algorithm {
   }
 
   /** Opens an output stream for writing */
-  public function create(OutputStream $out, int $level= Compression::DEFAULT): OutputStream {
-    return new GzipOutputStream($out, $this->level($level));
+  public function create(OutputStream $out, $options= null): OutputStream {
+    return new GzipOutputStream($out, $this->level(Options::from($options)->level));
   }
 }
