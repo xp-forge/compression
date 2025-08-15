@@ -24,8 +24,8 @@ class ZStandard extends Algorithm {
   }
 
   /** Compresses data */
-  public function compress(string $data, int $level= Compression::DEFAULT): string {
-    return zstd_compress($data, $this->level($level));
+  public function compress(string $data, $options= null): string {
+    return zstd_compress($data, $this->level(Options::from($options)->level));
   }
 
   /** Decompresses bytes */
@@ -44,7 +44,7 @@ class ZStandard extends Algorithm {
   }
 
   /** Opens an output stream for writing */
-  public function create(OutputStream $out, int $level= Compression::DEFAULT): OutputStream {
-    return new ZStandardOutputStream($out, $this->level($level));
+  public function create(OutputStream $out, $options= null): OutputStream {
+    return new ZStandardOutputStream($out, $this->level(Options::from($options)->level));
   }
 }
