@@ -5,6 +5,9 @@ Compression streams ChangeLog
 
 ## 2.0.0 / ????-??-??
 
+* Merged PR #11: Implement snappy compression in userland code. Snappy
+  does not aim for maximum compression, favoring high speeds.
+  (@thekid)
 * Merged PR #8: Add ZStandard compression, based on the `zstd` extension
   from https://github.com/kjdev/php-ext-zstd/ - see issue #7.
   (@thekid)
