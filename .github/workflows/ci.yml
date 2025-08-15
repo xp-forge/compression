@@ -70,7 +70,7 @@ jobs:
     - name: Add ZStandard extension (Windows)
       if: runner.os == 'Windows' && matrix.php-versions == '8.4'
       run: >
-        curl -sSL -o zstd.zip https://github.com/thekid/php-ext-zstd/releases/download/0.15.0/php_zstd-0.15.0-8.4-nts-vs17-x86_64.zip &&
+        curl -sSL -o zstd.zip https://github.com/kjdev/php-ext-zstd/releases/download/0.15.0/php_zstd-0.15.0-8.4-nts-vs17-x86_64.zip &&
         unzip zstd.zip &&
         cp php_zstd*.dll C:/tools/php/ext/php_zstd.dll &&
         echo "extension=zstd" >> C:/tools/php/php.ini
