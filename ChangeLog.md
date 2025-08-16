@@ -5,8 +5,8 @@ Compression streams ChangeLog
 
 ## 2.0.1 / 2025-08-16
 
-* Fixed `ZStandard` and `Brotli` output streams not closing underlying
-  streams when destructor is invoked
+* Fixed issue #52: `ZStandard` and `Brotli` output streams not closing
+  underlying streams when destructor is invoked
   (@thekid)
 
 ## 2.0.0 / 2025-08-15
