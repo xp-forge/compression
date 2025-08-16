@@ -53,10 +53,7 @@ class InflatingInputStream implements InputStream {
     $this->in= null;
   }
   
-  /**
-   * Destructor. Ensures output stream is closed.
-   *
-   */
+  /** Ensures input stream is closed */
   public function __destruct() {
     $this->close();
   }

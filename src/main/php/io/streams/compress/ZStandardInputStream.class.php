@@ -61,9 +61,7 @@ class ZStandardInputStream implements InputStream {
     }
   }
   
-  /**
-   * Destructor. Ensures output stream is closed.
-   */
+  /** Ensures input stream is closed */
   public function __destruct() {
     $this->close();
   }

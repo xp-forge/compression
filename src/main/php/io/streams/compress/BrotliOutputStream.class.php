@@ -62,4 +62,9 @@ class BrotliOutputStream implements OutputStream {
     }
     $this->out->close();
   }
+
+  /** Ensures output stream is closed */
+  public function __destruct() {
+    $this->close();
+  }
 }

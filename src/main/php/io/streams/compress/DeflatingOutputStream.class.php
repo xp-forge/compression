@@ -60,14 +60,10 @@ class DeflatingOutputStream implements OutputStream {
     $this->out= null;
   }
 
-  /**
-   * Destructor. Ensures output stream is closed.
-   *
-   */
+  /** Ensures output stream is closed */
   public function __destruct() {
     $this->close();
   }
-
 
   /** @return string */
   public function toString() {

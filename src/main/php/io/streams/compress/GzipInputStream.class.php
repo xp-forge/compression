@@ -147,7 +147,7 @@ class GzipInputStream implements InputStream {
     $this->fd= null;
   }
   
-  /** Ensures output stream is closed. */
+  /** Ensures input stream is closed */
   public function __destruct() {
     $this->close();
   }

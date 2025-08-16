@@ -60,5 +60,11 @@ class ZStandardOutputStream implements OutputStream {
       $this->out->write(zstd_compress_add($this->handle, '', true));
       $this->handle= null;
     }
+    $this->out->close();
+  }
+
+  /** Ensures output stream is closed */
+  public function __destruct() {
+    $this->close();
   }
 }
