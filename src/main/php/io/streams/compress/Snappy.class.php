@@ -1,6 +1,6 @@
 <?php namespace io\streams\compress;
 
-use io\IOException;
+use io\OperationFailed;
 use io\streams\{InputStream, OutputStream, Compression};
 
 /** @see https://en.wikipedia.org/wiki/Snappy_(compression) */
@@ -171,13 +171,13 @@ class Snappy extends Algorithm {
           $l= $c >> 2;
           if ($l >= 60) {
             $n= $l - 59;
-            if ($pos + $n >= $limit) throw new IOException('Not enough input, expected '.$n);
+            if ($pos + $n >= $limit) throw new OperationFailed('Not enough input, expected '.$n);
             $l= unpack('P', str_pad(substr($bytes, $pos, $n), 8, "\0"))[1];
             $pos+= $n;
           }
 
           $l++;
-          if ($pos + $l > $limit) throw new IOException('Not enough input, expected '.$l);
+          if ($pos + $l > $limit) throw new OperationFailed('Not enough input, expected '.$l);
 
           $out.= substr($bytes, $pos, $l);
           $pos+= $l;
@@ -193,7 +193,7 @@ class Snappy extends Algorithm {
           break;
 
         case 2:
-          if ($pos + 1 >= $limit) throw new IOException('Not enough input, expected 1');
+          if ($pos + 1 >= $limit) throw new OperationFailed('Not enough input, expected 1');
 
           $l= 1 + ($c >> 2);
           $offset= unpack('v', $bytes, $pos)[1];
@@ -204,7 +204,7 @@ class Snappy extends Algorithm {
           break;
 
         case 3:
-          if ($pos + 3 >= $limit) throw new IOException('Not enough input, expected 3');
+          if ($pos + 3 >= $limit) throw new OperationFailed('Not enough input, expected 3');
 
           $l= 1 + ($c >> 2);
           $offset= unpack('V', $bytes, $pos)[1];
@@ -218,7 +218,7 @@ class Snappy extends Algorithm {
 
     // Verify uncompressed length
     if ($length !== ($l= strlen($out))) {
-      throw new IOException('Expected length '.$length.', have '.$l);
+      throw new OperationFailed('Expected length '.$length.', have '.$l);
     }
 
     return $out;

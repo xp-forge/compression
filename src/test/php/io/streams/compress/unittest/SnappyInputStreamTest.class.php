@@ -1,6 +1,6 @@
 <?php namespace io\streams\compress\unittest;
 
-use io\IOException;
+use io\OperationFailed;
 use io\streams\compress\SnappyInputStream;
 use io\streams\{Streams, MemoryInputStream};
 use test\{Assert, Expect, Test, Values};
@@ -41,12 +41,12 @@ class SnappyInputStreamTest {
     );
   }
 
-  #[Test, Expect(class: IOException::class, message: 'Not enough input, expected 1')]
+  #[Test, Expect(class: OperationFailed::class, message: 'Not enough input, expected 1')]
   public function from_empty() {
     Streams::readAll($this->fixture(''));
   }
 
-  #[Test, Expect(class: IOException::class, message: 'Not enough input, expected 1')]
+  #[Test, Expect(class: OperationFailed::class, message: 'Not enough input, expected 1')]
   public function not_enough_input() {
     Streams::readAll($this->fixture("\x01"));
   }

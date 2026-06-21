@@ -1,6 +1,6 @@
 <?php namespace io\streams\compress;
 
-use io\IOException;
+use io\OperationFailed;
 use io\streams\{OutputStream, Streams};
 use lang\IllegalArgumentException;
 
@@ -28,7 +28,7 @@ class DeflatingOutputStream implements OutputStream {
     if (!stream_filter_append($this->out, 'zlib.deflate', STREAM_FILTER_WRITE, $level)) {
       fclose($this->out);
       $this->out= null;
-      throw new IOException('Could not append stream filter');
+      throw new OperationFailed('Could not append stream filter');
     }
   }
   

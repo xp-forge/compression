@@ -1,6 +1,6 @@
 <?php namespace io\streams\compress;
 
-use io\IOException;
+use io\OperationFailed;
 use io\streams\{Streams, InputStream};
 
 /**
@@ -20,7 +20,7 @@ class InflatingInputStream implements InputStream {
   public function __construct(InputStream $in) {
     $this->in= Streams::readableFd($in);
     if (!stream_filter_append($this->in, 'zlib.inflate', STREAM_FILTER_READ)) {
-      throw new IOException('Could not append stream filter');
+      throw new OperationFailed('Could not append stream filter');
     }
   }
 

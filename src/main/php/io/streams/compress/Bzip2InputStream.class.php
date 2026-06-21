@@ -1,6 +1,6 @@
 <?php namespace io\streams\compress;
 
-use io\IOException;
+use io\OperationFailed;
 use io\streams\{Streams, InputStream};
 
 /**
@@ -16,14 +16,14 @@ class Bzip2InputStream implements InputStream {
    * Constructor
    *
    * @param  io.streams.InputStream $in
-   * @throws io.IOException
+   * @throws io.OperationFailed
    */
   public function __construct(InputStream $in) {
     $this->fd= Streams::readableFd($in);
     if (!stream_filter_append($this->fd, 'bzip2.decompress', STREAM_FILTER_READ)) {
       fclose($this->fd);
       $this->fd= null;
-      throw new IOException('Could not append stream filter');
+      throw new OperationFailed('Could not append stream filter');
     }
   }
 
@@ -35,7 +35,7 @@ class Bzip2InputStream implements InputStream {
    */
   public function read($limit= 8192) {
     if (false === ($bytes= fread($this->fd, $limit))) {
-      $e= new IOException('Reading compressed data failed');
+      $e= new OperationFailed('Reading compressed data failed');
       \xp::gc(__FILE__);
       throw $e;
     }

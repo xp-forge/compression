@@ -1,6 +1,6 @@
 <?php namespace io\streams\compress;
 
-use io\IOException;
+use io\OperationFailed;
 use io\streams\{Streams, OutputStream};
 use lang\IllegalArgumentException;
 
@@ -22,7 +22,7 @@ class GzipOutputStream implements OutputStream {
    * @param  io.streams.OutputStream $out
    * @param  int $level default 6
    * @throws lang.IllegalArgumentException if the level is not between 0 and 9
-   * @throws io.IOException
+   * @throws io.OperationFailed
    */
   public function __construct(OutputStream $out, $level= 6) {
     if ($level < 0 || $level > 9) {
@@ -43,7 +43,7 @@ class GzipOutputStream implements OutputStream {
     if (!($this->filter= stream_filter_append($this->fd, 'zlib.deflate', STREAM_FILTER_WRITE, $level))) {
       fclose($this->fd);
       $this->fd= null;
-      throw new IOException('Could not append stream filter');
+      throw new OperationFailed('Could not append stream filter');
     }
     $this->md= hash_init('crc32b');
   }

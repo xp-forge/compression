@@ -1,6 +1,6 @@
 <?php namespace io\streams\compress;
 
-use io\IOException;
+use io\OperationFailed;
 use io\streams\{InputStream, OutputStream, Compression};
 
 class Bzip2 extends Algorithm {
@@ -32,7 +32,7 @@ class Bzip2 extends Algorithm {
   public function decompress(string $bytes): string {
     if (is_string($data= bzdecompress($bytes))) return $data;
 
-    $e= new IOException('Decompression failed ('.(false === $data ? 'general error' : 'error #'.$data).')');
+    $e= new OperationFailed('Decompression failed ('.(false === $data ? 'general error' : 'error #'.$data).')');
     \xp::gc(__FILE__);
     throw $e;
   }

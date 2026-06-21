@@ -1,6 +1,6 @@
 <?php namespace io\streams\compress;
 
-use io\IOException;
+use io\OperationFailed;
 use io\streams\InputStream;
 
 /** @test io.streams.compress.unittest.SnappyInputStreamTest */
@@ -14,14 +14,14 @@ class SnappyInputStream implements InputStream {
    *
    * @param  int $n
    * @return string
-   * @throws io.IOException
+   * @throws io.OperationFailed
    */
   private function bytes($n) {
     while (strlen($this->buffer) < $n) {
       if ($this->in->available()) {
         $this->buffer.= $this->in->read();
       } else {
-        throw new IOException('Not enough input, expected '.$n);
+        throw new OperationFailed('Not enough input, expected '.$n);
       }
     }
 
