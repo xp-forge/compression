@@ -1,6 +1,6 @@
 <?php namespace io\streams\compress;
 
-use io\IOException;
+use io\OperationFailed;
 use io\streams\{InputStream, OutputStream, Compression};
 
 class Gzip extends Algorithm {
@@ -31,7 +31,7 @@ class Gzip extends Algorithm {
   /** Decompresses bytes */
   public function decompress(string $bytes): string {
     if (false === ($data= gzuncompress($bytes))) {
-      $e= new IOException('Decompression failed');
+      $e= new OperationFailed('Decompression failed');
       \xp::gc(__FILE__);
       throw $e;
     }

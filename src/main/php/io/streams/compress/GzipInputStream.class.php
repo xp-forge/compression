@@ -1,6 +1,6 @@
 <?php namespace io\streams\compress;
 
-use io\IOException;
+use io\OperationFailed;
 use io\streams\InputStream;
 
 /**
@@ -61,7 +61,7 @@ class GzipInputStream implements InputStream {
    * Constructor
    *
    * @param  io.streams.InputStream $in
-   * @throws io.IOException
+   * @throws io.OperationFailed
    */
   public function __construct(InputStream $in) {
     $header= '';
@@ -78,13 +78,13 @@ class GzipInputStream implements InputStream {
     // * OS       (Operating system)
     $this->header= unpack('a2id/Cmethod/Cflags/Vtime/Cextra/Cos', $header);
     if ("\x1F\x8B" !== $this->header['id']) {
-      $e= new IOException('Invalid format, expected \037\213, have '.addcslashes($this->header['id'], "\0..\377"));
+      $e= new OperationFailed('Invalid format, expected \037\213, have '.addcslashes($this->header['id'], "\0..\377"));
       \xp::gc(__FILE__);
       throw $e;
     }
 
     if (8 !== $this->header['method']) {
-      throw new IOException('Unknown compression method #'.$this->header['method']);
+      throw new OperationFailed('Unknown compression method #'.$this->header['method']);
     }
 
     // Extract filename if present
@@ -103,7 +103,7 @@ class GzipInputStream implements InputStream {
     if (!stream_filter_append($this->fd, 'zlib.inflate', STREAM_FILTER_READ)) {
       fclose($this->fd);
       $this->fd= null;
-      throw new IOException('Could not append stream filter');
+      throw new OperationFailed('Could not append stream filter');
     }
   }
 
@@ -118,7 +118,7 @@ class GzipInputStream implements InputStream {
    */
   public function read($limit= 8192) {
     if (false === ($bytes= fread($this->fd, $limit))) {
-      $e= new IOException('Reading compressed data failed');
+      $e= new OperationFailed('Reading compressed data failed');
       \xp::gc(__FILE__);
       throw $e;
     }

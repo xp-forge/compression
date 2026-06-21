@@ -1,6 +1,6 @@
 <?php namespace io\streams\compress\unittest;
 
-use io\IOException;
+use io\OperationFailed;
 use io\streams\{Compression, MemoryInputStream, MemoryOutputStream, Streams};
 use lang\IllegalArgumentException;
 use test\verify\Runtime;
@@ -138,7 +138,7 @@ class CompressionTest {
     Assert::equals('Test', $result);
   }
 
-  #[Test, Values(from: 'erroneous'), Expect(IOException::class)]
+  #[Test, Values(from: 'erroneous'), Expect(OperationFailed::class)]
   public function decompress_erroneous($compressed, $bytes) {
     $compressed->decompress($bytes);
   }

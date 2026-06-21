@@ -1,6 +1,6 @@
 <?php namespace io\streams\compress\unittest;
 
-use io\IOException;
+use io\OperationFailed;
 use io\streams\MemoryInputStream;
 use io\streams\compress\ZStandardInputStream;
 use test\verify\Runtime;
@@ -26,7 +26,7 @@ class ZStandardInputStreamTest {
   #[Test]
   public function read_plain() {
     $in= new ZStandardInputStream(new MemoryInputStream('Test'));
-    Assert::throws(IOException::class, function() use($in) {
+    Assert::throws(OperationFailed::class, function() use($in) {
       $in->read();
     });
     $in->close();

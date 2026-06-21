@@ -1,6 +1,6 @@
 <?php namespace io\streams\compress;
 
-use io\IOException;
+use io\OperationFailed;
 use io\streams\{InputStream, OutputStream, Compression};
 
 class ZStandard extends Algorithm {
@@ -31,7 +31,7 @@ class ZStandard extends Algorithm {
   /** Decompresses bytes */
   public function decompress(string $bytes): string {
     if (false === ($data= zstd_uncompress($bytes))) {
-      $e= new IOException('Decompression failed');
+      $e= new OperationFailed('Decompression failed');
       \xp::gc(__FILE__);
       throw $e;
     }

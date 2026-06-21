@@ -1,6 +1,6 @@
 <?php namespace io\streams\compress\unittest;
 
-use io\IOException;
+use io\OperationFailed;
 use io\streams\{InputStream, MemoryInputStream};
 use test\{Assert, Expect, Test, Values};
 use util\Bytes;
@@ -60,7 +60,7 @@ abstract class DecompressingInputStreamTest {
     Assert::equals('Hello', $chunk);
   }
 
-  #[Test, Values(from: 'erroneous'), Expect(IOException::class)]
+  #[Test, Values(from: 'erroneous'), Expect(OperationFailed::class)]
   public function reading_erroneous($data) {
     $fixture= $this->fixture(new MemoryInputStream($data));
     try {

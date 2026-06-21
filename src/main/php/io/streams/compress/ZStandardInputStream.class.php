@@ -1,6 +1,6 @@
 <?php namespace io\streams\compress;
 
-use io\IOException;
+use io\OperationFailed;
 use io\streams\InputStream;
 
 /**
@@ -32,7 +32,7 @@ class ZStandardInputStream implements InputStream {
   public function read($limit= 8192) {
     $bytes= zstd_uncompress_add($this->handle, $this->in->read($limit));
     if (false === $bytes) {
-      $e= new IOException('Failed to uncompress');
+      $e= new OperationFailed('Failed to uncompress');
       \xp::gc(__FILE__);
       throw $e;
     }

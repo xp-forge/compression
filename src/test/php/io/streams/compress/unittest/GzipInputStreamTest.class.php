@@ -1,6 +1,6 @@
 <?php namespace io\streams\compress\unittest;
 
-use io\IOException;
+use io\OperationFailed;
 use io\streams\compress\GzipInputStream;
 use io\streams\{InputStream, MemoryInputStream};
 use test\verify\Runtime;
@@ -40,7 +40,7 @@ class GzipInputStreamTest extends DecompressingInputStreamTest {
     Assert::equals('test.txt', $fixture->header()['filename']);
   }
 
-  #[Test, Expect(IOException::class)]
+  #[Test, Expect(OperationFailed::class)]
   public function from_empty() {
     $this->fixture(new MemoryInputStream(''));
   }
