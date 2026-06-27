@@ -96,7 +96,7 @@ class GzipInputStream implements InputStream {
     }
 
     // Now, convert stream to file handle and append inflating filter
-    $uri= 'zlib.bounded://'.spl_object_hash($in);
+    $uri= 'zlib.bounded://'.spl_object_id($in);
     self::$wrapped[$uri]= $in;
 
     $this->fd= fopen($uri, 'r');
