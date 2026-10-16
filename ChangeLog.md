@@ -3,6 +3,13 @@ Compression streams ChangeLog
 
 ## ?.?.? / ????-??-??
 
+## 2.1.1 / 2026-10-16
+
+* Added PHP 8.6 to the test matrix - @thekid
+* Fixed *E_DEPRECATED: Function spl_object_hash() is deprecated since 8.6,
+  consider using spl_object_id() instead*
+  (@thekid)
+
 ## 2.1.0 / 2026-06-21
 
 * Merged PR #13: Refactor I/O exceptions, dropping XP 10 support in the
